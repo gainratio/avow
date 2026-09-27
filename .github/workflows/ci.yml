@@ -66,6 +66,8 @@ jobs:
         run: |
           pnpm --dir ts install --frozen-lockfile --ignore-scripts
           pnpm --dir ts gate
+      - name: Run the receipt-ui gate
+        run: pnpm --dir ts/packages/receipt-ui gate
 
   vector-parity:
     name: Python and TypeScript vector parity
