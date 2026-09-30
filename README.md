@@ -169,10 +169,10 @@ TypeScript, on Node.js 22.13 or newer:
 npm install @edgeproc/avow@0.5.0
 ```
 
-`0.5.0` is the first release built from this repository. Python releases `0.1.0` through
-`0.4.1` came from an older repository and also installed stray `assay/` and `writ/`
-packages that overwrote another project's files; they are being yanked, so do not
-install them. If one of them broke `assay-engine`, run
+`0.5.0` is out on PyPI and npm, and it is the first release built from this repository.
+Python releases `0.1.0` through `0.4.1` came from an older repository and also installed
+stray `assay/` and `writ/` packages that overwrote another project's files. Those releases
+are yanked on PyPI, so pip skips them unless you pin one exactly; do not install them. If one of them broke `assay-engine`, run
 `pip uninstall assay-engine && pip install assay-engine`. See the
 [CHANGELOG](CHANGELOG.md).
 

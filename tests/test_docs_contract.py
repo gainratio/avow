@@ -193,7 +193,9 @@ def test_should_state_proof_limits_and_first_clean_release_status() -> None:
     assert f"`{_source_version()}`" in markdown
     assert re.search(r"first release (built )?from this repository", markdown, re.I)
     assert re.search(r"`0\.1\.0`[\s\S]{0,40}`0\.4\.1`[^.]*`assay/`[^.]*`writ/`", markdown)
-    assert re.search(r"yank", markdown, re.I)
+    # And the yank is reported as done, since 0.5.0 is on PyPI and 0.1.0-0.4.1 are yanked
+    assert re.search(r"\bare yanked\b", markdown, re.I)
+    assert not re.search(r"being yanked|will be yanked", markdown, re.I)
 
 
 def test_should_state_both_release_versions_without_registry_drift() -> None:
