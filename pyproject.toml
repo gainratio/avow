@@ -11,15 +11,16 @@ requires-python = ">=3.12"
 license = "MIT"
 authors = [{ name = "Harish Seshadri" }]
 dependencies = [
-  "click>=8,<9",
   "pydantic>=2.10,<3",
   "pynacl>=1.5,<2",
   "rfc8785>=0.1.4,<1",
-  "typer>=0.16,<0.26",
 ]
 
+[project.optional-dependencies]
+cli = ["typer>=0.27.2"]
+
 [project.scripts]
-avow = "avow.cli:main"
+avow = "avow._console:main"
 
 [dependency-groups]
 dev = [
@@ -28,6 +29,7 @@ dev = [
   "pytest>=9.0.3,<10",
   "pytest-cov>=6,<7",
   "ruff>=0.12,<1",
+  "typer>=0.27.2",
   "xenon>=0.9.3,<1",
 ]
 

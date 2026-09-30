@@ -39,7 +39,9 @@ output: original: {'service': 'checkout-api', 'decision': 'approved'} -> verifie
 - **Status** — Beta: `0.5.0` is the first release from this repository, as `avow` on
   PyPI and `@edgeproc/avow` on npm. Python releases `0.1.0` through `0.4.1` predate this
   repository and installed stray packages that overwrote another project's files; they
-  are being yanked, so install `0.5.0` or newer. See [CHANGELOG](CHANGELOG.md).
+  are being yanked, so install `0.5.0` or newer. `0.5.1` makes the command line optional:
+  `pip install avow` is the library only, `pip install "avow[cli]"` adds the `avow`
+  command. See [CHANGELOG](CHANGELOG.md).
 
 ## Try it in 60 seconds
 
@@ -264,7 +266,7 @@ instead. To prove that packaged path, build and install the wheel as shown in th
 
 ### Version and publication status
 
-The Python and npm source versions are both `0.5.0`. Pushing the exact tag `v0.5.0` is
+The Python and npm source versions are both `0.5.1`. Pushing the exact tag `v0.5.1` is
 the only thing that publishes them, through the trusted-publishing workflow. Python
 releases `0.1.0` through `0.4.1` were built from the pre-split repository and shipped
 top-level `assay/` and `writ/` packages that overwrote `assay-engine`; they will be
@@ -276,8 +278,9 @@ README publishes, tags, or changes a registry release.
 
 - **Python library** — `sign_payload`, `verify_receipt`, the key helpers, and the ledger
   functions are exported from `avow`; the example above is the smallest complete use.
-- **Command line** — `avow keygen`, `avow sign`, `avow verify`, `avow ledger append`, and
-  `avow ledger verify`, each printing a stable success or error code; see the
+- **Command line** — install `avow[cli]` for `avow keygen`, `avow sign`, `avow verify`,
+  `avow ledger append`, and `avow ledger verify`, each printing a stable success or error
+  code (plain `avow` is the library alone and needs no Typer); see the
   [quickstart](QUICKSTART.md#use-the-cli-directly).
 - **TypeScript** — `signPayload` and `verifySignature` from `@edgeproc/avow`; see the
   [TypeScript package](ts/README.md).

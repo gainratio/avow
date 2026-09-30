@@ -7,7 +7,7 @@ payloads, or other secrets in the report.
 
 ## Supported versions
 
-`0.5.0` (Python `avow` and npm `@edgeproc/avow`) is the supported release. Python
+`0.5.1` (Python `avow` and npm `@edgeproc/avow`) is the supported release. Python
 releases `0.1.0` through `0.4.1` are unsupported: they shipped stray top-level `assay/`
 and `writ/` packages and will be yanked from PyPI.
 
