@@ -145,7 +145,7 @@ def test_should_put_one_line_install_before_internals_and_keep_the_evidence_loop
     commands = _first_runnable_block(markdown)
     loop = re.findall(r"```bash\n(bash examples/run_evidence_loop\.sh)\n```", markdown)
     # Then a cold reader starts from one install line and the evidence loop stays one line
-    assert commands == ('pip install "avow>=0.5.0"',)
+    assert commands == ('pip install "avow[cli]>=0.5.1"',)
     assert loop == ["bash examples/run_evidence_loop.sh"]
 
 
@@ -189,7 +189,8 @@ def test_should_state_proof_limits_and_first_clean_release_status() -> None:
     assert "## What this proves" in _architecture()
     assert "## What this does not prove" in _architecture()
     # Then 0.5.0 is named as the first clean release and 0.1.0-0.4.1 as the broken ones
-    assert _source_version() == "0.5.0"
+    assert _source_version() == "0.5.1"
+    assert "`0.5.0`" in markdown
     assert f"`{_source_version()}`" in markdown
     assert re.search(r"first release (built )?from this repository", markdown, re.I)
     assert re.search(r"`0\.1\.0`[\s\S]{0,40}`0\.4\.1`[^.]*`assay/`[^.]*`writ/`", markdown)
@@ -204,13 +205,26 @@ def test_should_state_both_release_versions_without_registry_drift() -> None:
     quickstart = Path("QUICKSTART.md").read_text(encoding="utf-8")
     typescript = _TYPESCRIPT_README.read_text(encoding="utf-8")
     security = Path("SECURITY.md").read_text(encoding="utf-8")
-    # Then both ecosystems ship the same 0.5.0 and no doc still names the dev candidate
-    assert (_source_version(), _npm_source_version()) == ("0.5.0", "0.5.0")
-    assert all("`0.5.0`" in text for text in (root, quickstart, typescript, security))
+    # Then both ecosystems ship the same 0.5.1 and no doc still names the dev candidate
+    assert (_source_version(), _npm_source_version()) == ("0.5.1", "0.5.1")
+    assert all("`0.5.1`" in text for text in (root, quickstart, typescript, security))
     assert not any(
         re.search(r"0\.5\.0[.-]dev", text) for text in (root, quickstart, typescript, security)
     )
-    assert "dist/avow-0.5.0-py3-none-any.whl" in quickstart
+    assert "dist/avow-0.5.1-py3-none-any.whl[cli]" in quickstart
+
+
+def test_should_tell_command_users_to_install_the_cli_extra() -> None:
+    # Given the reader-facing install paths and the 0.5.1 changelog entry
+    readme = _readme()
+    changelog = Path("CHANGELOG.md").read_text(encoding="utf-8")
+    entry = changelog.partition("## [0.5.1]")[2].partition("\n## [")[0]
+    # Then the command's extra is named wherever the command is introduced
+    assert "avow[cli]" in readme
+    # And the release note explains the conflict and repeats the 0.5.0 key-mode rule
+    assert "typer is no longer a hard dependency" in entry
+    assert "edge-proc" in entry
+    assert "chmod 600" in entry
 
 
 def test_should_record_the_packaging_fix_and_upgrade_path_in_the_changelog() -> None:
@@ -230,7 +244,7 @@ def test_should_keep_release_tooling_out_of_end_user_first_run() -> None:
     first_run = "\n".join(_first_runnable_block(markdown))
     release = _getting_started().partition("## Maintainer release check")[2]
     # Then users still get one simple start while maintainers get exact tool prerequisites
-    assert first_run == 'pip install "avow>=0.5.0"'
+    assert first_run == 'pip install "avow[cli]>=0.5.1"'
     assert "release-candidate" not in markdown.partition("## How it works")[0]
     assert all(item in release for item in ("Node 22", "Corepack", "pnpm 11.5.0"))
     assert "uv run poe release-candidate" in release

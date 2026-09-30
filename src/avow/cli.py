@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Annotated, Final
 
 import typer
-from click import ClickException
 from nacl.signing import VerifyKey
 from pydantic import TypeAdapter, ValidationError
 
@@ -61,7 +60,7 @@ def main() -> int:
     """Run Typer without automatic exception rendering at the privacy boundary."""
     try:
         result: object = app(standalone_mode=False)
-    except ClickException:
+    except typer.TyperException:
         typer.echo(_PARSE_ERROR, err=True)
         return _ERROR_EXIT
     return result if isinstance(result, int) else 0

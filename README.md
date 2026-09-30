@@ -2,7 +2,7 @@
 
 Avow signs a JSON record into a receipt, a file anyone can check offline to confirm the record is unchanged and who signed it.
 
-**Try it: `pip install "avow>=0.5.0"`, then run the four commands under [Try it](#try-it).**
+**Try it: `pip install "avow[cli]>=0.5.1"`, then run the four commands under [Try it](#try-it).**
 
 [![CI](https://github.com/hseshadr/avow/actions/workflows/ci.yml/badge.svg)](https://github.com/hseshadr/avow/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/hseshadr/avow)](LICENSE)
@@ -27,10 +27,10 @@ TypeScript package that reads and writes the same receipts.
 
 You need Python 3.12 or newer.
 
-1. Install Avow:
+1. Install Avow with its command (the `cli` extra):
 
 ```bash
-pip install "avow>=0.5.0"
+pip install "avow[cli]>=0.5.1"
 ```
 
 2. Make a key pair, write a record, sign it, and check it. Run these in an empty folder:
@@ -90,7 +90,7 @@ receipt against someone else's public key fails the same way, with
 
 ### From Python
 
-The same thing from Python:
+The same thing from Python. This needs only `pip install avow`, not the `cli` extra:
 
 ```python
 from avow import generate_signing_key, public_key_hex, sign_payload, verify_receipt
@@ -157,19 +157,23 @@ A longer comparison is in [Architecture](docs/ARCHITECTURE.md#compared-with-othe
 
 ## Install
 
-Python 3.12 or newer:
+Python 3.12 or newer. This gives you the library and the `avow` command:
 
 ```bash
-pip install "avow>=0.5.0"
+pip install "avow[cli]>=0.5.1"
 ```
+
+If you only want the Python library and not the command, `pip install avow` is enough.
 
 TypeScript, on Node.js 22.13 or newer:
 
 ```bash
-npm install @edgeproc/avow@0.5.0
+npm install @edgeproc/avow
 ```
 
 `0.5.0` is out on PyPI and npm, and it is the first release built from this repository.
+`0.5.1` makes the command optional: `pip install avow` is the library alone, and
+`pip install "avow[cli]"` adds the `avow` command.
 Python releases `0.1.0` through `0.4.1` came from an older repository and also installed
 stray `assay/` and `writ/` packages that overwrote another project's files. Those releases
 are yanked on PyPI, so pip skips them unless you pin one exactly; do not install them. If one of them broke `assay-engine`, run

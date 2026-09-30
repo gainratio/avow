@@ -166,5 +166,5 @@ uv run poe release-candidate
 ```
 
 The check rejects any active Node major other than 22 before installing dependencies.
-Pushing the exact tag `v0.5.0` is what publishes; nothing in this guide publishes, tags,
+Pushing the exact tag `v0.5.1` is what publishes; nothing in this guide publishes, tags,
 or changes a registry release.
