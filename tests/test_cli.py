@@ -194,7 +194,7 @@ def test_should_ship_only_avow_console_entry_point(tmp_path: Path) -> None:
     # When its console entry-point metadata is inspected
     metadata = _entry_points(wheel)
     # Then Avow owns its command and does not install Assay's command
-    assert metadata == "[console_scripts]\navow = avow.cli:main\n"
+    assert metadata == "[console_scripts]\navow = avow._console:main\n"
 
 
 def test_should_route_workflow_through_thin_typer_adapter(
