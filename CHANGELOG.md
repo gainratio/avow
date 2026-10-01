@@ -4,6 +4,12 @@ All notable standalone Avow changes will be recorded here.
 
 ## [Unreleased]
 
+- Rewrite the README in plain English: what a receipt is, a CLI walkthrough with real
+  output, honest limits, and install steps. Move the technical detail into the new
+  `docs/ARCHITECTURE.md`, add `docs/GETTING_STARTED.md` for new developers, and update
+  the README contract tests to pin the new section order and ban internal jargon.
+- Record that `0.5.0` is released and that `0.1.0` through `0.4.1` are now yanked on PyPI.
+
 ## [0.5.1]
 
 - **fix: typer is no longer a hard dependency (0.5.0 conflicted with edge-proc).** `0.5.0`
