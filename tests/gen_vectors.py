@@ -3,7 +3,7 @@
 Run:  uv run python tests/gen_vectors.py
 
 Emits three deterministic files replayed byte-for-byte by both the Python kernel tests
-(``tests/test_vectors.py``) and P1's TypeScript ``@edgeproc/avow`` conformance suite:
+(``tests/test_vectors.py``) and P1's TypeScript ``@gainratio/avow`` conformance suite:
 
 * ``testdata/vectors/canonical.json`` — RFC 8785 canonical bytes + ``sha256:`` hashes
   for a payload set that deliberately stresses the number-serialization hazard

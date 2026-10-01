@@ -10,6 +10,14 @@ All notable standalone Avow changes will be recorded here.
   the README contract tests to pin the new section order and ban internal jargon.
 - Record that `0.5.0` is released and that `0.1.0` through `0.4.1` are now yanked on PyPI.
 
+## [0.5.2]
+
+- **npm package renamed to `@gainratio/avow`; old name deprecated.** `@edgeproc/avow`
+  `0.5.1` and older keep installing (with a deprecation warning once the old name is
+  deprecated); new releases ship only as `@gainratio/avow`. Change
+  `npm install @edgeproc/avow` to `npm install @gainratio/avow` and update imports.
+  No code change. The Python package `avow` moves to `0.5.2` in lockstep, unchanged.
+
 ## [0.5.1]
 
 - **fix: typer is no longer a hard dependency (0.5.0 conflicted with edge-proc).** `0.5.0`

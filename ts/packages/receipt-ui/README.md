@@ -1,4 +1,4 @@
-# @edgeproc/receipt-ui
+# @gainratio/receipt-ui
 
 Render and verify an Avow `SignedReceipt` in React.
 
@@ -20,16 +20,16 @@ color alone) inside an ARIA `role="status"` live region.
 ## Install
 
 ```sh
-pnpm add @edgeproc/receipt-ui @edgeproc/avow react
+pnpm add @gainratio/receipt-ui @gainratio/avow react
 ```
 
-`@edgeproc/avow` and `react` are peer dependencies — the app provides them, so
+`@gainratio/avow` and `react` are peer dependencies — the app provides them, so
 there is a single avow instance and a single `SignedReceipt` type across the app
 and this package.
 
-| receipt-ui | `@edgeproc/avow` peer | Receipt format |
+| receipt-ui | `@gainratio/avow` peer | Receipt format |
 | --- | --- | --- |
-| 0.3.x | `^0.5.0` | `avow.receipt/v1` (carries a `schema` field) |
+| 0.3.x | `^0.5.2` | `avow.receipt/v1` (carries a `schema` field) |
 | 0.1.x – 0.2.x | `^0.1.0` | pre-schema receipts (published from the old `hseshadr/assay` repo) |
 
 A receipt without the `avow.receipt/v1` schema renders as *Not verified* on
@@ -38,7 +38,7 @@ A receipt without the `avow.receipt/v1` schema renders as *Not verified* on
 ## Use
 
 ```tsx
-import { ReceiptPanel } from "@edgeproc/receipt-ui";
+import { ReceiptPanel } from "@gainratio/receipt-ui";
 
 // `receipt` came from your engine (avow `signPayload`); `SIGNER_KEY` is the
 // hex public key you trust. `verify` is optional — it defaults to avow's own
@@ -59,7 +59,7 @@ own presentation; `StatusPill` is the standalone verdict chip.
 
 ## Localize
 
-> **Requires `@edgeproc/receipt-ui` 0.2.0 or newer.** 0.1.0 has no `labels`
+> **Requires `@gainratio/receipt-ui` 0.2.0 or newer.** 0.1.0 has no `labels`
 > prop — it renders the built-in English strings and silently ignores the
 > object. Check the version you resolved before filing a bug. See
 > [`CHANGELOG.md`](CHANGELOG.md).

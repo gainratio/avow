@@ -207,8 +207,8 @@ jobs:
                 npm release/npm "$VERSION" /tmp/npm-state && \
               grep -qx 'publish=false' /tmp/pypi-state && \
               grep -qx 'publish=false' /tmp/npm-state && \
-              test "$(npm view @edgeproc/avow dist-tags."$NPM_DIST_TAG")" = "$VERSION"; then
-              echo "verified registry bytes for avow ${PYTHON_VERSION} and @edgeproc/avow ${VERSION}"
+              test "$(npm view @gainratio/avow dist-tags."$NPM_DIST_TAG")" = "$VERSION"; then
+              echo "verified registry bytes for avow ${PYTHON_VERSION} and @gainratio/avow ${VERSION}"
               exit 0
             fi
             echo "attempt ${attempt}/60: registry bytes are not ready"

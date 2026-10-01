@@ -4,7 +4,7 @@ import {
   publicKeyHex,
   type SignedReceipt,
   signPayload,
-} from "@edgeproc/avow";
+} from "@gainratio/avow";
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
 import { shortenHex } from "./format.js";

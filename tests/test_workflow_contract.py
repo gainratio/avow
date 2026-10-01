@@ -256,7 +256,7 @@ def test_should_verify_real_release_artifacts_through_clean_installs(tmp_path: P
     )
     # Then all three consumer surfaces pass with aligned metadata
     assert result.returncode == 0, result.stderr
-    assert result.stdout == ("verified release artifacts: avow 0.5.1 and @edgeproc/avow 0.5.1\n")
+    assert result.stdout == ("verified release artifacts: avow 0.5.2 and @gainratio/avow 0.5.2\n")
 
 
 def test_should_explain_node_22_requirement_before_running_release_gate(tmp_path: Path) -> None:
@@ -505,7 +505,7 @@ def test_should_keep_npm_prereleases_off_the_latest_channel() -> None:
     assert '--tag "$NPM_DIST_TAG"' in command
     assert "needs.preflight-npm.outputs.dist-tag" in str(publish)
     registry = _commands(_job(workflow, "verify-published"))
-    assert 'npm view @edgeproc/avow dist-tags."$NPM_DIST_TAG"' in registry
+    assert 'npm view @gainratio/avow dist-tags."$NPM_DIST_TAG"' in registry
 
 
 def test_should_skip_the_entire_oidc_job_for_identical_registry_releases() -> None:
@@ -533,10 +533,10 @@ def test_should_skip_the_entire_oidc_job_for_identical_registry_releases() -> No
 
 
 def test_should_fail_closed_until_python_and_npm_versions_align(tmp_path: Path) -> None:
-    # Given a Python 0.5.1 source beside a stale npm 0.4.1 manifest
+    # Given a Python 0.5.2 source beside a stale npm 0.4.1 manifest
     script = _release_fixture(tmp_path / "divergent", npm_version="0.4.1")
     # When a tag matches only the Python candidate
-    result = _run_identity(script, "v0.5.1")
+    result = _run_identity(script, "v0.5.2")
     # Then release eligibility fails without disclosing artifact metadata
     assert (result.returncode, result.stdout) == (1, "")
     assert result.stderr == "release tag and artifact versions do not match\n"
@@ -544,14 +544,14 @@ def test_should_fail_closed_until_python_and_npm_versions_align(tmp_path: Path) 
 
 def test_should_accept_only_one_tag_matching_both_artifact_versions(tmp_path: Path) -> None:
     # Given aligned Python and npm artifact metadata
-    script = _release_fixture(tmp_path / "aligned", npm_version="0.5.1")
+    script = _release_fixture(tmp_path / "aligned", npm_version="0.5.2")
     # When the exact shared version tag is checked
-    exact = _run_identity(script, "v0.5.1")
-    wrong = _run_identity(script, "v0.5.1-dev.0")
+    exact = _run_identity(script, "v0.5.2")
+    wrong = _run_identity(script, "v0.5.2-dev.0")
     # Then only the exact tag is release-eligible
     assert (exact.returncode, exact.stdout, exact.stderr) == (
         0,
-        "verified release identity: v0.5.1\n",
+        "verified release identity: v0.5.2\n",
         "",
     )
     assert wrong.returncode == 1

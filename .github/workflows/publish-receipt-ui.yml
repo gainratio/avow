@@ -1,4 +1,4 @@
-# npm release of `@edgeproc/receipt-ui` (ts/packages/receipt-ui) through OIDC
+# npm release of `@gainratio/receipt-ui` (ts/packages/receipt-ui) through OIDC
 # trusted publishing. A `receipt-ui-vX.Y.Z` tag push is the whole trigger; there
 # is no npm write token in this repository.
 #
@@ -7,8 +7,8 @@
 #     so `receipt-ui-v0.3.0` can never trigger an avow release, and this file's
 #     `receipt-ui-v*.*.*` can never match a `vX.Y.Z` tag. One tag, one rail.
 #   * npm trusted publishing is registered per package against the calling
-#     workflow filename: @edgeproc/receipt-ui -> hseshadr/avow publish-receipt-ui.yml,
-#     disjoint from @edgeproc/avow -> hseshadr/avow publish.yml.
+#     workflow filename: @gainratio/receipt-ui -> hseshadr/avow publish-receipt-ui.yml,
+#     disjoint from @gainratio/avow -> hseshadr/avow publish.yml.
 #
 # Release = bump ts/packages/receipt-ui/package.json + its CHANGELOG, merge to
 # main, then `git tag receipt-ui-vX.Y.Z && git push origin receipt-ui-vX.Y.Z`.
@@ -95,7 +95,7 @@ jobs:
           (cd release && sha256sum --check SHA256SUMS)
           VERSION="${RELEASE_TAG#receipt-ui-v}"
           LOCAL="sha512-$(openssl dgst -sha512 -binary release/*.tgz | base64 -w0)"
-          REMOTE="$(npm view "@edgeproc/receipt-ui@${VERSION}" dist.integrity 2>/dev/null || true)"
+          REMOTE="$(npm view "@gainratio/receipt-ui@${VERSION}" dist.integrity 2>/dev/null || true)"
           if [[ -z "$REMOTE" ]]; then
             echo "publish=true" >> "$GITHUB_OUTPUT"
           elif [[ "$REMOTE" == "$LOCAL" ]]; then
@@ -154,7 +154,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${RELEASE_TAG#receipt-ui-v}"
-          SPEC="@edgeproc/receipt-ui@${VERSION}"
+          SPEC="@gainratio/receipt-ui@${VERSION}"
           LOCAL="sha512-$(openssl dgst -sha512 -binary release/*.tgz | base64 -w0)"
           for attempt in $(seq 1 60); do
             REMOTE="$(npm view "$SPEC" dist.integrity 2>/dev/null || true)"

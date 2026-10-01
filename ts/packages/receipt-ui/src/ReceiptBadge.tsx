@@ -1,4 +1,4 @@
-import { type JsonValue, verifySignature } from "@edgeproc/avow";
+import { type JsonValue, verifySignature } from "@gainratio/avow";
 import type { ReactElement } from "react";
 import { StatusPill } from "./StatusPill.js";
 import type { ReceiptVerificationProps } from "./types.js";

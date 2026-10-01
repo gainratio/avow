@@ -58,7 +58,7 @@ ts/src/    → npm tarball: dist/
 ```
 
 The Python wheel owns canonical JSON, hashes, Ed25519 key handling, receipts, the
-`avow` command, and the append-only ledger. The npm package `@edgeproc/avow` owns the
+`avow` command, and the append-only ledger. The npm package `@gainratio/avow` owns the
 portable TypeScript canonicalization and receipt code; it does not ship the Python
 ledger. Contract tests build both artifacts and check this mapping against their real
 contents.
@@ -98,7 +98,7 @@ action-policy logic belong to their applications, not to Avow.
   [quickstart](../QUICKSTART.md#use-the-cli-directly). Success codes go to standard
   output; error codes go to standard error, with exit code `2` (or `3` for
   `avow.ledger_recovery_required`).
-- **TypeScript:** `signPayload` and `verifySignature` from `@edgeproc/avow`; see the
+- **TypeScript:** `signPayload` and `verifySignature` from `@gainratio/avow`; see the
   [TypeScript package](../ts/README.md).
 
 The JSON values Avow accepts, and why integers stay within ±(2^53 − 1), are listed in
@@ -208,10 +208,11 @@ not encryption or redaction.
 
 ## Versions and publication
 
-The Python and npm source versions are both `0.5.1`. `0.5.0` was the first release built
+The Python and npm source versions are both `0.5.2`. `0.5.0` was the first release built
 from this repository; `0.5.1` moves Typer to an optional `cli` extra, so `pip install avow`
-is the library alone and `pip install "avow[cli]"` adds the `avow` command. Pushing the
-exact tag `v0.5.1` is the only thing that publishes them, through the trusted-publishing
+is the library alone and `pip install "avow[cli]"` adds the `avow` command. `0.5.2` renames
+the npm package from `@edgeproc/avow` to `@gainratio/avow` with no code change. Pushing the
+exact tag `v0.5.2` is the only thing that publishes them, through the trusted-publishing
 workflow. Python releases `0.1.0` through `0.4.1` were built from
 the pre-split repository and shipped top-level `assay/` and `writ/` packages that
 overwrote `assay-engine`; they are now yanked on PyPI. If an
@@ -225,8 +226,10 @@ is recorded in [PROVENANCE.md](../PROVENANCE.md).
 Python ledger, and the refusal of group- or other-readable key files. The broken
 `0.1.0`–`0.4.1` Python releases are yanked on PyPI.
 
-**Next release:** `0.5.1`, which makes the `avow` command an optional `cli` extra. It is
-not published until the tag `v0.5.1` is pushed.
+**Shipped:** `0.5.1`, which makes the `avow` command an optional `cli` extra.
+
+**Next release:** `0.5.2`, which renames the npm package to `@gainratio/avow`. It is not
+published until the tag `v0.5.2` is pushed.
 
 **Not shipped:** KMS or HSM support for signing keys. Replay protection stays with the
 caller by design; see

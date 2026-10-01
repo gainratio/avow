@@ -1,4 +1,4 @@
-import type { JsonValue, SignedReceipt } from "@edgeproc/avow";
+import type { JsonValue, SignedReceipt } from "@gainratio/avow";
 import type { ReactNode } from "react";
 
 /**
