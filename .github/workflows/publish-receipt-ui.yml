@@ -1,0 +1,170 @@
+# npm release of `@edgeproc/receipt-ui` (ts/packages/receipt-ui) through OIDC
+# trusted publishing. A `receipt-ui-vX.Y.Z` tag push is the whole trigger; there
+# is no npm write token in this repository.
+#
+# A separate file from publish.yml ON PURPOSE, so the two rails cannot cross-fire:
+#   * publish.yml fires on `v*.*.*`, which only matches tags that START with "v",
+#     so `receipt-ui-v0.3.0` can never trigger an avow release, and this file's
+#     `receipt-ui-v*.*.*` can never match a `vX.Y.Z` tag. One tag, one rail.
+#   * npm trusted publishing is registered per package against the calling
+#     workflow filename: @edgeproc/receipt-ui -> hseshadr/avow publish-receipt-ui.yml,
+#     disjoint from @edgeproc/avow -> hseshadr/avow publish.yml.
+#
+# Release = bump ts/packages/receipt-ui/package.json + its CHANGELOG, merge to
+# main, then `git tag receipt-ui-vX.Y.Z && git push origin receipt-ui-vX.Y.Z`.
+name: Publish receipt-ui
+
+on:
+  push:
+    tags: ["receipt-ui-v*.*.*"]
+
+permissions: {}
+
+concurrency:
+  group: publish-receipt-ui-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Unprivileged receipt-ui gate and pack
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        with:
+          version: "11.5.0"
+          run_install: false
+      - name: Verify exact commit and tag-to-package version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          VERSION="${RELEASE_TAG#receipt-ui-v}"
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test "$(node -p 'require("./ts/packages/receipt-ui/package.json").version')" = "$VERSION"
+      - name: Run the avow and receipt-ui gates
+        run: |
+          pnpm --dir ts install --frozen-lockfile --ignore-scripts
+          pnpm --dir ts gate
+          pnpm --dir ts/packages/receipt-ui gate
+      - name: Pack the reviewed tarball
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          pnpm --dir ts/packages/receipt-ui pack --pack-destination "$PWD/release"
+          (cd release && sha256sum -- *.tgz > SHA256SUMS)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: receipt-ui-release-${{ github.sha }}
+          path: release/
+          if-no-files-found: error
+          retention-days: 1
+
+  preflight:
+    name: Check npm release state
+    needs: [build]
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read # Download the reviewed release artifact.
+    outputs:
+      publish: ${{ steps.registry.outputs.publish }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: receipt-ui-release-${{ github.sha }}
+          path: release
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24.15.0"
+          package-manager-cache: false
+      - name: Publish only a missing version; fail closed on drift
+        id: registry
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          (cd release && sha256sum --check SHA256SUMS)
+          VERSION="${RELEASE_TAG#receipt-ui-v}"
+          LOCAL="sha512-$(openssl dgst -sha512 -binary release/*.tgz | base64 -w0)"
+          REMOTE="$(npm view "@edgeproc/receipt-ui@${VERSION}" dist.integrity 2>/dev/null || true)"
+          if [[ -z "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$REMOTE" == "$LOCAL" ]]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "npm already serves different bytes for ${VERSION}" >&2
+            exit 1
+          fi
+
+  publish:
+    name: Publish missing npm release through OIDC
+    needs: [build, preflight]
+    if: ${{ needs.preflight.outputs.publish == 'true' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read # Download the reviewed npm artifact.
+      id-token: write # Request a short-lived npm publishing identity.
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: receipt-ui-release-${{ github.sha }}
+          path: release
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24.15.0"
+          package-manager-cache: false
+      - name: Pin an OIDC-capable npm client
+        run: npm install --global npm@12.0.2 # zizmor: ignore[adhoc-packages]
+      - name: Publish npm artifact
+        run: npm publish ./release/*.tgz --access public --provenance
+
+  verify-published:
+    name: Verify registry bytes and provenance
+    needs: [preflight, publish]
+    if: >-
+      ${{
+        always() &&
+        needs.preflight.result == 'success' &&
+        (needs.publish.result == 'success' || needs.publish.result == 'skipped')
+      }}
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read # Download the reviewed bytes for registry comparison.
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: receipt-ui-release-${{ github.sha }}
+          path: release
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24.15.0"
+          package-manager-cache: false
+      - name: Verify npm serves the reviewed bytes with provenance
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          VERSION="${RELEASE_TAG#receipt-ui-v}"
+          SPEC="@edgeproc/receipt-ui@${VERSION}"
+          LOCAL="sha512-$(openssl dgst -sha512 -binary release/*.tgz | base64 -w0)"
+          for attempt in $(seq 1 60); do
+            REMOTE="$(npm view "$SPEC" dist.integrity 2>/dev/null || true)"
+            PROVENANCE="$(npm view "$SPEC" dist.attestations.provenance.predicateType 2>/dev/null || true)"
+            if [[ "$REMOTE" == "$LOCAL" && -n "$PROVENANCE" ]]; then
+              echo "verified registry bytes and provenance for ${SPEC}"
+              exit 0
+            fi
+            echo "attempt ${attempt}/60: registry bytes are not ready"
+            sleep 10
+          done
+          echo "registry verification timed out" >&2
+          exit 1
