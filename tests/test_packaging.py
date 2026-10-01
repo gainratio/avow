@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import importlib
 import io
+import re
 import subprocess
 import sys
 import tarfile
@@ -69,6 +70,22 @@ def test_should_ship_only_the_avow_package_in_the_built_sdist(built: tuple[Path,
     release = _release_module()
     # Then its src/ layout carries exactly one package
     assert release.sdist_top_levels(built[1]) == frozenset({"avow"})
+
+
+def _requires_dist(wheel: Path) -> tuple[str, ...]:
+    with zipfile.ZipFile(wheel) as archive:
+        name = next(n for n in archive.namelist() if n.endswith(".dist-info/METADATA"))
+        lines = archive.read(name).decode().splitlines()
+    return tuple(line.removeprefix("Requires-Dist: ") for line in lines if "Requires-Dist" in line)
+
+
+def test_should_keep_cli_dependencies_out_of_the_core_install(built: tuple[Path, Path]) -> None:
+    # Given the dependency metadata of the built wheel
+    requires = _requires_dist(built[0])
+    # Then the core needs only the trust kernel, and typer arrives only with [cli]
+    core = {re.split(r"[<>=!~;\[ ]", r)[0] for r in requires if "extra ==" not in r}
+    assert core == {"pydantic", "pynacl", "rfc8785"}
+    assert "typer>=0.27.2; extra == 'cli'" in requires
 
 
 def test_should_count_top_level_modules_and_ignore_dist_info(tmp_path: Path) -> None:

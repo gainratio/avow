@@ -5,7 +5,7 @@
 Avow creates signed, tamper-evident records. Give it any JSON evidence; it
 returns a receipt that another machine can verify offline.
 
-This is the `0.5.0` release of `@edgeproc/avow`, the first built from this repository.
+This is the `0.5.1` release of `@edgeproc/avow`; `0.5.0` was the first built from this repository.
 
 ## Usage
 

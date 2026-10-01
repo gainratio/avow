@@ -24,7 +24,8 @@ def _installed_wheel(tmp_path: Path) -> Path:
     wheel = next(wheel_dir.glob("*.whl"))
     environment = tmp_path / "environment"
     _run_checked(["uv", "venv", "--python", "3.13", str(environment)])
-    _run_checked(["uv", "pip", "install", "--python", str(environment / "bin/python"), str(wheel)])
+    python = str(environment / "bin/python")
+    _run_checked(["uv", "pip", "install", "--python", python, f"avow[cli] @ {wheel.as_uri()}"])
     return environment
 
 
