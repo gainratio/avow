@@ -1,4 +1,4 @@
-import { type JsonValue, verifySignature } from "@edgeproc/avow";
+import { type JsonValue, verifySignature } from "@gainratio/avow";
 import type { ReactElement } from "react";
 import { shortenHex } from "./format.js";
 import { StatusPill } from "./StatusPill.js";

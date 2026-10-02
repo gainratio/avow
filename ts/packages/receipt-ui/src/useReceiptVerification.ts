@@ -1,4 +1,4 @@
-import type { JsonValue, SignedReceipt } from "@edgeproc/avow";
+import type { JsonValue, SignedReceipt } from "@gainratio/avow";
 import { useEffect, useState } from "react";
 import type { ReceiptStatus, VerifyFn } from "./types.js";
 

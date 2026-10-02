@@ -1,4 +1,4 @@
-/** `@edgeproc/avow` — the portable TypeScript Avow trust kernel. */
+/** `@gainratio/avow` — the portable TypeScript Avow trust kernel. */
 
 export { canonicalBytes, contentHash, type JsonValue } from "./canonical.js";
 export {

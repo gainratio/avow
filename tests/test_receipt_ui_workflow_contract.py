@@ -1,4 +1,4 @@
-"""Contract for the separate `@edgeproc/receipt-ui` npm release rail."""
+"""Contract for the separate `@gainratio/receipt-ui` npm release rail."""
 
 from __future__ import annotations
 
@@ -91,7 +91,7 @@ def test_should_declare_avow_0_5_as_peer_and_this_repository_as_source() -> None
     # Given the receipt-ui manifest that npm will serve
     package = _mapping(json.loads(_PACKAGE.read_text(encoding="utf-8")))
     # Then it targets avow 0.5 and points provenance at hseshadr/avow
-    assert _mapping(package["peerDependencies"])["@edgeproc/avow"] == "^0.5.0"
+    assert _mapping(package["peerDependencies"])["@gainratio/avow"] == "^0.5.2"
     assert _mapping(package["repository"]) == {
         "type": "git",
         "url": "git+https://github.com/hseshadr/avow.git",

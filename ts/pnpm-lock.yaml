@@ -39,7 +39,7 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.3
         version: 2.5.4
-      '@edgeproc/avow':
+      '@gainratio/avow':
         specifier: workspace:*
         version: link:../..
       '@testing-library/react':

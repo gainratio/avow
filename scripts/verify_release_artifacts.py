@@ -19,7 +19,7 @@ _PYTHON_PRERELEASE = re.compile(r"^(\d+\.\d+\.\d+)\.dev(\d+)$")
 _ARGUMENT_COUNT = 2
 _SDIST_PACKAGE_DEPTH = 2  # avow-X.Y.Z/src/<package>/...
 _NODE_PROBE = """
-import { generateSeedHex, publicKeyHex, signPayload, verifySignature } from '@edgeproc/avow';
+import { generateSeedHex, publicKeyHex, signPayload, verifySignature } from '@gainratio/avow';
 const key = generateSeedHex();
 const pinned = await publicKeyHex(key);
 const receipt = await signPayload({ artifact: 'sha256:clean-install' }, key);
@@ -161,7 +161,7 @@ def _validate_metadata(artifacts: Artifacts) -> tuple[Identity, Identity]:
     validate_top_levels(artifacts.wheel, artifacts.sdist)
     if wheel != sdist or wheel.name != "avow":
         raise ValueError("Python artifact metadata does not match")
-    if npm.name != "@edgeproc/avow" or npm.version != _npm_spelling(wheel.version):
+    if npm.name != "@gainratio/avow" or npm.version != _npm_spelling(wheel.version):
         raise ValueError("Python and npm artifact metadata does not match")
     return wheel, npm
 

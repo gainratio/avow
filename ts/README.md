@@ -5,7 +5,9 @@
 Avow creates signed, tamper-evident records. Give it any JSON evidence; it
 returns a receipt that another machine can verify offline.
 
-This is the `0.5.1` release of `@edgeproc/avow`; `0.5.0` was the first built from this repository.
+This is the `0.5.2` release of `@gainratio/avow`. It is the first under the `@gainratio`
+scope; `@edgeproc/avow` `0.5.1` and older stay installable but are deprecated. `0.5.0`
+was the first built from this repository.
 
 ## Usage
 
@@ -15,7 +17,7 @@ import {
   publicKeyHex,
   signPayload,
   verifySignature,
-} from "@edgeproc/avow";
+} from "@gainratio/avow";
 
 const signingSeed = generateSeedHex();
 const pinnedPublicKey = await publicKeyHex(signingSeed);

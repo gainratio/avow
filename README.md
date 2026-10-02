@@ -168,12 +168,14 @@ If you only want the Python library and not the command, `pip install avow` is e
 TypeScript, on Node.js 22.13 or newer:
 
 ```bash
-npm install @edgeproc/avow
+npm install @gainratio/avow
 ```
 
 `0.5.0` is out on PyPI and npm, and it is the first release built from this repository.
 `0.5.1` makes the command optional: `pip install avow` is the library alone, and
 `pip install "avow[cli]"` adds the `avow` command.
+`0.5.2` only renames the npm package from `@edgeproc/avow` to `@gainratio/avow`; the
+Python package is unchanged apart from the version number.
 Python releases `0.1.0` through `0.4.1` came from an older repository and also installed
 stray `assay/` and `writ/` packages that overwrote another project's files. Those releases
 are yanked on PyPI, so pip skips them unless you pin one exactly; do not install them. If one of them broke `assay-engine`, run
@@ -218,7 +220,7 @@ local traps we hit, a map of the code, a first change, and how to open a pull re
   codes, replay protection, and key rotation.
 - [Quickstart](QUICKSTART.md): every CLI command, the JSON values Avow accepts, and how
   to test the built wheel.
-- [TypeScript package](ts/README.md): using `@edgeproc/avow`.
+- [TypeScript package](ts/README.md): using `@gainratio/avow`.
 - [CHANGELOG](CHANGELOG.md): what changed in each release.
 - [SECURITY.md](SECURITY.md): how to report a vulnerability privately.
 - [PROVENANCE.md](PROVENANCE.md): where this repository's history came from.

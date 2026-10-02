@@ -189,7 +189,7 @@ def test_should_state_proof_limits_and_first_clean_release_status() -> None:
     assert "## What this proves" in _architecture()
     assert "## What this does not prove" in _architecture()
     # Then 0.5.0 is named as the first clean release and 0.1.0-0.4.1 as the broken ones
-    assert _source_version() == "0.5.1"
+    assert _source_version() == "0.5.2"
     assert "`0.5.0`" in markdown
     assert f"`{_source_version()}`" in markdown
     assert re.search(r"first release (built )?from this repository", markdown, re.I)
@@ -205,13 +205,13 @@ def test_should_state_both_release_versions_without_registry_drift() -> None:
     quickstart = Path("QUICKSTART.md").read_text(encoding="utf-8")
     typescript = _TYPESCRIPT_README.read_text(encoding="utf-8")
     security = Path("SECURITY.md").read_text(encoding="utf-8")
-    # Then both ecosystems ship the same 0.5.1 and no doc still names the dev candidate
-    assert (_source_version(), _npm_source_version()) == ("0.5.1", "0.5.1")
-    assert all("`0.5.1`" in text for text in (root, quickstart, typescript, security))
+    # Then both ecosystems ship the same 0.5.2 and no doc still names the dev candidate
+    assert (_source_version(), _npm_source_version()) == ("0.5.2", "0.5.2")
+    assert all("`0.5.2`" in text for text in (root, quickstart, typescript, security))
     assert not any(
         re.search(r"0\.5\.0[.-]dev", text) for text in (root, quickstart, typescript, security)
     )
-    assert "dist/avow-0.5.1-py3-none-any.whl[cli]" in quickstart
+    assert "dist/avow-0.5.2-py3-none-any.whl[cli]" in quickstart
 
 
 def test_should_tell_command_users_to_install_the_cli_extra() -> None:

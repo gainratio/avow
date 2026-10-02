@@ -6,7 +6,7 @@ import {
   publicKeyHex,
   RECEIPT_SCHEMA,
   type SignedReceipt,
-} from "@edgeproc/avow";
+} from "@gainratio/avow";
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
 import { ReceiptBadge } from "./ReceiptBadge.js";

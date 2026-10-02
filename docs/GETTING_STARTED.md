@@ -103,7 +103,7 @@ in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 | `src/avow/ledger.py` | The append-only ledger that chains receipts |
 | `src/avow/cli.py` | The `avow` command and its stable output codes |
 | `src/avow/errors.py` | Every error type and its stable `avow.*` code |
-| `ts/src/` | The TypeScript package `@edgeproc/avow` (canonical JSON and receipts) |
+| `ts/src/` | The TypeScript package `@gainratio/avow` (canonical JSON and receipts) |
 | `testdata/vectors/` | Shared test vectors both languages must match byte for byte |
 | `tests/` | Python tests; `test_readme_contract.py` re-runs the README examples |
 | `scripts/` | Release build and verification scripts |
@@ -166,5 +166,5 @@ uv run poe release-candidate
 ```
 
 The check rejects any active Node major other than 22 before installing dependencies.
-Pushing the exact tag `v0.5.1` is what publishes; nothing in this guide publishes, tags,
+Pushing the exact tag `v0.5.2` is what publishes; nothing in this guide publishes, tags,
 or changes a registry release.

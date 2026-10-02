@@ -154,7 +154,7 @@ def _npm_state(root: Path, version: str) -> bool:
     tarballs = tuple(root.glob("*.tgz"))
     if len(tarballs) != 1:
         raise ValueError("npm release artifact count mismatch")
-    encoded = urllib.parse.quote("@edgeproc/avow", safe="")
+    encoded = urllib.parse.quote("@gainratio/avow", safe="")
     payload = _fetch_json(f"https://registry.npmjs.org/{encoded}/{version}")
     attestation = _fetch_json(_npm_attestation_url(payload)) if payload is not None else None
     return npm_release_state(tarballs[0], payload, attestation)
