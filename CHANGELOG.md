@@ -4,6 +4,8 @@ All notable standalone Avow changes will be recorded here.
 
 ## [Unreleased]
 
+## [0.5.3]
+
 - **fix: receipts sealed by avow `0.4.x` and older verify again, in Python and
   TypeScript.** `0.5.0` made the `schema` field required and refused every receipt
   without it, so every receipt sealed before `0.5.0` (including receipts sealed through
@@ -27,8 +29,7 @@ All notable standalone Avow changes will be recorded here.
 - **Inverted tests (a stated contract is reversed):** the tests that asserted "a
   receipt without `schema` is rejected" now assert it verifies. They were asserting
   the defect.
-
-- Rewrite the README in plain English: what a receipt is, a CLI walkthrough with real
+- Docs: rewrite the README in plain English: what a receipt is, a CLI walkthrough with real
   output, honest limits, and install steps. Move the technical detail into the new
   `docs/ARCHITECTURE.md`, add `docs/GETTING_STARTED.md` for new developers, and update
   the README contract tests to pin the new section order and ban internal jargon.
