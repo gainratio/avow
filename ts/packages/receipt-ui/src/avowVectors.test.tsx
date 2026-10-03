@@ -64,9 +64,26 @@ describe("ReceiptBadge against avow's shared receipt vectors", () => {
     await expectVerdict(vector, untrustedKey, "wrong-key");
   });
 
-  it("renders INVALID for a receipt without the avow.receipt/v1 schema", async () => {
+  it("renders INVALID for a receipt with an unknown schema", async () => {
     const legacy = { ...vector, schema: "avow.receipt/v0" } as never;
     await expectVerdict(legacy, file.public_key, "invalid");
+  });
+
+  it("renders VERIFIED for a receipt sealed by avow 0.4.1 (no schema)", async () => {
+    // Frozen output of the released @edgeproc/avow@0.4.1; avow >= 0.5.3 accepts
+    // the schema-less legacy form, and this package shows avow's verdict as-is.
+    const goldenPath = resolve(
+      import.meta.dirname,
+      "../../../../testdata/vectors/legacy_receipts.json",
+    );
+    const golden = JSON.parse(readFileSync(goldenPath, "utf-8")) as {
+      public_key: string;
+      typescript_receipts: SignedReceipt<JsonValue>[];
+    };
+    const [legacy] = golden.typescript_receipts;
+    if (legacy === undefined) throw new Error("no legacy receipts");
+    expect(Object.hasOwn(legacy, "schema")).toBe(false);
+    await expectVerdict(legacy, golden.public_key, "verified");
   });
 
   it("pins hex keys by value like avow: an uppercase pin still verifies", async () => {

@@ -4,7 +4,13 @@
 `avow` / `@gainratio/avow` co-releases (see the root `CHANGELOG.md`) and
 released from `receipt-ui-vX.Y.Z` tags.
 
-## [0.3.0] - Unreleased
+## [Unreleased]
+
+- Docs only, no code change: with `@gainratio/avow` `0.5.3`, receipts sealed by avow
+  `0.4.x` (no `schema` field) render *Verified* again. The `^0.5.2` peer range already
+  accepts `0.5.3`, so no receipt-ui release is needed.
+
+## [0.3.0]
 
 ### Changed
 

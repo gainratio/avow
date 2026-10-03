@@ -19,7 +19,16 @@ from typing import Final, Literal, overload
 
 from nacl.exceptions import BadSignatureError
 from nacl.signing import SigningKey, VerifyKey
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    TypeAdapter,
+    ValidationError,
+    model_serializer,
+    model_validator,
+)
 
 from avow.canonical import JsonValue, canonical_bytes, content_hash
 from avow.errors import (
@@ -36,18 +45,28 @@ type Subject = BaseModel | JsonValue
 type SubjectInput = BaseModel | JsonValue | Mapping[str, JsonValue]
 _JSON_ADAPTER: TypeAdapter[JsonValue] = TypeAdapter(JsonValue)
 RECEIPT_SCHEMA: Final = "avow.receipt/v1"
-_SIGNED_FIELDS: Final = frozenset({"payload", "payload_hash", "public_key", "signature"})
+# A receipt sealed by avow <= 0.4.x has no ``schema`` field at all. ``None`` is how the
+# model records that absence; it is never accepted as a value someone wrote.
+LEGACY_RECEIPT_SCHEMA: Final = None
+_ACCEPTED_SCHEMAS: Final = (RECEIPT_SCHEMA, LEGACY_RECEIPT_SCHEMA)
+_SCHEMA_KEYS: Final = ("schema", "receipt_schema")
+_MISSING: Final = object()
 
 
 class SignedReceipt[SubjectT: Subject](BaseModel):
     """A signed subject: the subject plus its content-hash, public key and signature.
 
     The envelope is generic over ``SubjectT`` and never inspects subject fields. It
-    signs canonical JSON, so unrelated applications share the same receipt contract."""
+    signs canonical JSON, so unrelated applications share the same receipt contract.
+
+    ``schema`` is an unsigned label. New receipts carry ``avow.receipt/v1``; receipts
+    sealed by avow <= 0.4.x carry no ``schema`` key and parse with
+    ``receipt_schema=None``. Both forms sign the same bytes, so the label selects no
+    different verification rule. A ``schema`` key that is present must be exactly v1."""
 
     model_config = ConfigDict(frozen=True, extra="forbid", serialize_by_alias=True)
 
-    receipt_schema: Literal["avow.receipt/v1"] = Field(alias="schema")
+    receipt_schema: Literal["avow.receipt/v1"] | None = Field(default=None, alias="schema")
     payload: SubjectT
     payload_hash: str
     public_key: str
@@ -56,12 +75,19 @@ class SignedReceipt[SubjectT: Subject](BaseModel):
     @model_validator(mode="before")
     @classmethod
     def require_supported_schema(cls, value: object) -> object:
-        """Reject legacy or unknown envelopes before validating signed fields."""
-        if not isinstance(value, Mapping):
-            return value
-        if value.keys() >= _SIGNED_FIELDS and value.get("schema") != RECEIPT_SCHEMA:
+        """Accept v1 or an absent schema (legacy); reject any other present value."""
+        if isinstance(value, Mapping) and "schema" in value and value["schema"] != RECEIPT_SCHEMA:
             raise ReceiptSchemaMismatch("receipt schema is missing or unsupported")
         return value
+
+    @model_serializer(mode="wrap")
+    def omit_legacy_schema(self, handler: SerializerFunctionWrapHandler) -> object:
+        """Write a legacy receipt back without a schema key, exactly as 0.4.x sealed it."""
+        data = handler(self)
+        if self.receipt_schema is LEGACY_RECEIPT_SCHEMA and isinstance(data, dict):
+            for key in _SCHEMA_KEYS:
+                data.pop(key, None)
+        return data
 
 
 def _require_frozen(payload: BaseModel) -> None:
@@ -145,8 +171,20 @@ def _check_hash[SubjectT: Subject](receipt: SignedReceipt[SubjectT]) -> None:
 
 
 def _require_receipt_schema(receipt: object) -> None:
-    if getattr(receipt, "receipt_schema", None) != RECEIPT_SCHEMA:
+    """Re-check the label, since ``model_copy`` and ``model_construct`` skip validation."""
+    if getattr(receipt, "receipt_schema", _MISSING) not in _ACCEPTED_SCHEMAS:
         raise ReceiptSchemaMismatch("receipt schema is missing or unsupported")
+
+
+def _signed_message[SubjectT: Subject](receipt: SignedReceipt[SubjectT]) -> bytes:
+    """The exact bytes the signer signed, for both accepted receipt forms.
+
+    A legacy receipt (avow <= 0.4.x, no ``schema``) and a v1 receipt sign the same
+    message: the RFC 8785 JCS bytes of the payload. ``schema`` is never part of it, so a
+    v1 receipt with the label removed is byte-identical to the legacy receipt for the
+    same payload and key. ``tests/test_legacy_receipts.py`` pins that identity against
+    receipts sealed by the released 0.4.1."""
+    return canonical_bytes(_subject_json(receipt.payload))
 
 
 def _require_signer[SubjectT: Subject](
@@ -176,5 +214,4 @@ def verify_signature[SubjectT: Subject](
     _require_receipt_schema(receipt)
     _check_hash(receipt)
     _require_signer(receipt, expected_public_key)
-    message = canonical_bytes(_subject_json(receipt.payload))
-    _check_signature_bytes(message, receipt.signature, expected_public_key)
+    _check_signature_bytes(_signed_message(receipt), receipt.signature, expected_public_key)

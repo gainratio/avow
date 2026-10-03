@@ -209,9 +209,22 @@ def test_should_route_workflow_through_thin_typer_adapter(
     assert {path.name for path in tmp_path.iterdir()} == _ARTIFACTS
 
 
-@pytest.mark.parametrize("schema", [None, "avow.receipt/v0", ""])
-def test_should_reject_missing_or_wrong_receipt_schema_with_typed_cli_code(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, schema: str | None
+def test_should_verify_a_receipt_without_schema_as_the_legacy_form(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # Inverted in 0.5.3: `avow verify` used to refuse every receipt sealed by
+    # avow <= 0.4.x. The schema label is unsigned, so the legacy form verifies.
+    monkeypatch.chdir(tmp_path)
+    _write_schema_mutation(_create_receipt(), None)
+    result = _RUNNER.invoke(
+        app, ["verify", "--receipt", "receipt.json", "--public-key", "signing.key.pub"]
+    )
+    assert (result.exit_code, result.stderr) == (0, "")
+
+
+@pytest.mark.parametrize("schema", ["avow.receipt/v0", "avow.receipt/v2", ""])
+def test_should_reject_wrong_receipt_schema_with_typed_cli_code(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, schema: str
 ) -> None:
     monkeypatch.chdir(tmp_path)
     receipt = _create_receipt()
