@@ -208,11 +208,12 @@ not encryption or redaction.
 
 ## Versions and publication
 
-The Python and npm source versions are both `0.5.2`. `0.5.0` was the first release built
+The Python and npm source versions are both `0.5.3`. `0.5.0` was the first release built
 from this repository; `0.5.1` moves Typer to an optional `cli` extra, so `pip install avow`
 is the library alone and `pip install "avow[cli]"` adds the `avow` command. `0.5.2` renames
-the npm package from `@edgeproc/avow` to `@gainratio/avow` with no code change. Pushing the
-exact tag `v0.5.2` is the only thing that publishes them, through the trusted-publishing
+the npm package from `@edgeproc/avow` to `@gainratio/avow` with no code change. `0.5.3`
+accepts receipts with no `schema` field (sealed by `0.4.x` and older) again. Pushing the
+exact tag `v0.5.3` is the only thing that publishes them, through the trusted-publishing
 workflow. Python releases `0.1.0` through `0.4.1` were built from
 the pre-split repository and shipped top-level `assay/` and `writ/` packages that
 overwrote `assay-engine`; they are now yanked on PyPI. If an
@@ -228,8 +229,10 @@ Python ledger, and the refusal of group- or other-readable key files. The broken
 
 **Shipped:** `0.5.1`, which makes the `avow` command an optional `cli` extra.
 
-**Next release:** `0.5.2`, which renames the npm package to `@gainratio/avow`. It is not
-published until the tag `v0.5.2` is pushed.
+**Shipped:** `0.5.2`, which renames the npm package to `@gainratio/avow`.
+
+**Next release:** `0.5.3`, which makes receipts sealed by `0.4.x` and older verify again.
+It is not published until the tag `v0.5.3` is pushed.
 
 **Not shipped:** KMS or HSM support for signing keys. Replay protection stays with the
 caller by design; see

@@ -41,7 +41,7 @@ AVOW_DEMO_DIR="$PWD/demo-output" bash examples/run_evidence_loop.sh
 
 ## Prove the wheel, outside the repository
 
-The checkout is source, not an installed package. To prove the real `0.5.2` Python
+The checkout is source, not an installed package. To prove the real `0.5.3` Python
 package artifact rather than the source tree, build and install the wheel with its `cli`
 extra (plain `avow` is the library only; the `avow` command needs `avow[cli]`):
 
@@ -49,7 +49,7 @@ extra (plain `avow` is the library only; the `avow` command needs `avow[cli]`):
 uv build --wheel
 tmp="$(mktemp -d)"
 uv venv --python 3.13 "$tmp/venv"
-uv pip install --python "$tmp/venv/bin/python" "dist/avow-0.5.2-py3-none-any.whl[cli]"
+uv pip install --python "$tmp/venv/bin/python" "dist/avow-0.5.3-py3-none-any.whl[cli]"
 cp -R examples "$tmp/examples"
 PATH="$tmp/venv/bin:$PATH" bash "$tmp/examples/run_evidence_loop.sh"
 ```

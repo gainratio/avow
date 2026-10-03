@@ -176,6 +176,8 @@ npm install @gainratio/avow
 `pip install "avow[cli]"` adds the `avow` command.
 `0.5.2` only renames the npm package from `@edgeproc/avow` to `@gainratio/avow`; the
 Python package is unchanged apart from the version number.
+`0.5.3` fixes a break from `0.5.0`: receipts sealed by `0.4.x` and older, which have no
+`schema` field, verify again in Python and TypeScript.
 Python releases `0.1.0` through `0.4.1` came from an older repository and also installed
 stray `assay/` and `writ/` packages that overwrote another project's files. Those releases
 are yanked on PyPI, so pip skips them unless you pin one exactly; do not install them. If one of them broke `assay-engine`, run

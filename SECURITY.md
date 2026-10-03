@@ -7,7 +7,7 @@ payloads, or other secrets in the report.
 
 ## Supported versions
 
-`0.5.2` (Python `avow` and npm `@gainratio/avow`) is the supported release. Python
+`0.5.3` (Python `avow` and npm `@gainratio/avow`) is the supported release. Python
 releases `0.1.0` through `0.4.1` are unsupported: they shipped stray top-level `assay/`
 and `writ/` packages and will be yanked from PyPI.
 
