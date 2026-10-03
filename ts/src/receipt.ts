@@ -28,12 +28,19 @@ import {
 } from "./errors.js";
 import { publicKeyHex } from "./keys.js";
 
-/** The only receipt envelope schema accepted and emitted by this runtime. */
+/** The receipt envelope schema this runtime emits on every new receipt. */
 export const RECEIPT_SCHEMA = "avow.receipt/v1" as const;
 
-/** A signed subject: the subject plus its content-hash, public key and signature. */
+/**
+ * A signed subject: the subject plus its content-hash, public key and signature.
+ *
+ * `schema` is an unsigned label. New receipts carry `avow.receipt/v1`; receipts
+ * sealed by avow <= 0.4.x have no `schema` key at all and still verify. Both
+ * forms sign the same bytes, so the label selects no different rule. A `schema`
+ * key that is present must be exactly `avow.receipt/v1`.
+ */
 export interface SignedReceipt<S extends JsonValue> {
-  schema: typeof RECEIPT_SCHEMA;
+  schema?: typeof RECEIPT_SCHEMA;
   payload: S;
   payload_hash: string;
   public_key: string;
@@ -44,7 +51,7 @@ export interface SignedReceipt<S extends JsonValue> {
 export async function signPayload<S extends JsonValue>(
   payload: S,
   seedHex: string,
-): Promise<SignedReceipt<S>> {
+): Promise<SignedReceipt<S> & { schema: typeof RECEIPT_SCHEMA }> {
   const snapshot = snapshotJsonValue(payload) as S;
   const message = canonicalBytes(snapshot);
   const signature = await signAsync(message, etc.hexToBytes(seedHex));
@@ -80,8 +87,31 @@ async function checkSignatureBytes(
 }
 
 /**
+ * Accept the v1 label or no `schema` key at all (the avow <= 0.4.x form).
+ * A key that is present with any other value, `undefined` included, is refused.
+ */
+function requireAcceptedSchema(receipt: object): void {
+  if (!Object.hasOwn(receipt, "schema")) return;
+  if ((receipt as { schema?: unknown }).schema !== RECEIPT_SCHEMA) {
+    throw new ReceiptSchemaMismatch("receipt schema is missing or unsupported");
+  }
+}
+
+/**
+ * The exact bytes the signer signed, for both accepted receipt forms: the RFC
+ * 8785 JCS bytes of the payload. `schema` is never part of them, so a v1
+ * receipt with the label removed is byte-identical to the legacy receipt for
+ * the same payload and key (pinned against the released 0.4.1 by
+ * `legacyReceipt.test.ts`).
+ */
+function signedMessage(snapshot: JsonValue): Uint8Array {
+  return canonicalBytes(snapshot);
+}
+
+/**
  * Verify a receipt against a *pinned* signer key. Fail-closed: throws a coded
- * `ReceiptSchemaMismatch` (schema is missing or unsupported),
+ * `ReceiptSchemaMismatch` (a `schema` is present but is not `avow.receipt/v1`;
+ * a receipt with no `schema` is the avow <= 0.4.x form and verifies),
  * `PayloadHashMismatch` (content hash disagrees), `SignerMismatch` (embedded key
  * is not the pinned signer), or `SignatureBytesInvalid` (the signature does not
  * verify). The latter two both extend the published `SignatureInvalid` base.
@@ -95,7 +125,7 @@ async function checkSignatureBytes(
  * the browser build — so if you need "have I seen this before?", keep that state
  * yourself (a server-side nonce, or the Python `avow.ledger` chain).
  *
- * The order mirrors Python exactly: require the supported receipt schema first,
+ * The order mirrors Python exactly: require an accepted receipt schema first,
  * recompute the payload hash, then reject any receipt whose embedded `public_key`
  * is not the caller-pinned key — independent of the signature, because that field
  * lives outside the signed payload and a re-signed forgery can swap it in — then
@@ -105,9 +135,7 @@ export async function verifySignature<S extends JsonValue>(
   receipt: SignedReceipt<S>,
   expectedPublicKey: string,
 ): Promise<void> {
-  if (receipt.schema !== RECEIPT_SCHEMA) {
-    throw new ReceiptSchemaMismatch("receipt schema is missing or unsupported");
-  }
+  requireAcceptedSchema(receipt);
   const snapshot = snapshotJsonValue(receipt.payload);
   if ((await contentHash(snapshot)) !== receipt.payload_hash) {
     throw new PayloadHashMismatch(
@@ -123,7 +151,7 @@ export async function verifySignature<S extends JsonValue>(
     throw new SignerMismatch("receipt public key is not the expected signer");
   }
   await checkSignatureBytes(
-    canonicalBytes(snapshot),
+    signedMessage(snapshot),
     receipt.signature,
     expectedPublicKey,
   );

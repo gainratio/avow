@@ -174,9 +174,21 @@ def test_should_verify_a_freshly_signed_receipt() -> None:
     assert len(receipt.public_key) == 64
 
 
-@pytest.mark.parametrize("schema", [None, "avow.receipt/v0", ""])
-def test_should_reject_missing_or_wrong_receipt_schema_during_verification(
-    schema: str | None,
+def test_should_verify_a_receipt_without_schema_as_the_legacy_form() -> None:
+    # Inverted in 0.5.3: this case used to assert rejection, which broke every receipt
+    # sealed by avow <= 0.4.x. ``schema`` is unsigned, so dropping it changes no signed
+    # byte; the result is exactly the receipt 0.4.x sealed for this payload and key.
+    receipt = sign_payload(_payload(), SigningKey(_SEED))
+    legacy = receipt.model_copy(update={"receipt_schema": None})
+
+    verify_signature(legacy, expected_public_key=_EXPECTED)
+
+    assert "schema" not in legacy.model_dump()
+
+
+@pytest.mark.parametrize("schema", ["avow.receipt/v0", "avow.receipt/v2", ""])
+def test_should_reject_wrong_receipt_schema_during_verification(
+    schema: str,
 ) -> None:
     receipt = sign_payload(_payload(), SigningKey(_SEED))
     forged = receipt.model_copy(update={"receipt_schema": schema})
@@ -188,9 +200,28 @@ def test_should_reject_missing_or_wrong_receipt_schema_during_verification(
     assert caught.value.code == "avow.receipt_schema_mismatch"
 
 
-@pytest.mark.parametrize("schema_update", [{}, {"schema": "avow.receipt/v0"}, {"schema": ""}])
-def test_should_reject_missing_or_wrong_receipt_schema_during_parsing(
-    schema_update: dict[str, str],
+def test_should_parse_a_receipt_without_schema_as_the_legacy_form() -> None:
+    # Inverted in 0.5.3: an absent schema is the avow <= 0.4.x wire form, not an error.
+    receipt_data = sign_payload(_payload(), SigningKey(_SEED)).model_dump(mode="json")
+    receipt_data.pop("schema")
+
+    receipt = SignedReceipt[_EvidenceSubject].model_validate(receipt_data)
+
+    assert receipt.receipt_schema is None
+    verify_signature(receipt, expected_public_key=_EXPECTED)
+
+
+@pytest.mark.parametrize(
+    "schema_update",
+    [
+        {"schema": "avow.receipt/v0"},
+        {"schema": ""},
+        {"schema": None},
+        {"schema": "avow.receipt/v2"},
+    ],
+)
+def test_should_reject_wrong_receipt_schema_during_parsing(
+    schema_update: dict[str, str | None],
 ) -> None:
     receipt_data = sign_payload(_payload(), SigningKey(_SEED)).model_dump(mode="json")
     receipt_data.pop("schema")

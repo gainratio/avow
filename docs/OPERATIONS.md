@@ -101,8 +101,13 @@ Python and TypeScript share one portable `JsonValue`/I-JSON-compatible domain:
 - booleans; and
 - `null`.
 
-Every receipt uses the exact envelope schema `avow.receipt/v1`. A missing or unsupported
-schema fails first with `avow.receipt_schema_mismatch`, before payload or signer checks.
+Every new receipt carries the envelope schema `avow.receipt/v1`. A receipt with no
+`schema` key is the form avow `0.4.x` and older sealed; it still verifies, under the same
+hash and signature rules. A `schema` that is present but is not exactly `avow.receipt/v1`
+fails first with `avow.receipt_schema_mismatch`, before payload or signer checks.
+`schema` is an unsigned label: removing it from a v1 receipt gives exactly the receipt
+`0.4.x` would have sealed for the same payload and key, so it changes nothing the
+signature covers.
 
 Larger exact integers must be strings. NaN, positive/negative infinity, lone surrogate
 code points, non-string keys, functions, symbols, accessors, sparse arrays, cyclic

@@ -1,0 +1,150 @@
+{
+  "_provenance": [
+    "Frozen output of the RELEASED avow 0.4.1 artifacts; nothing here is derived from this repo's code.",
+    "python: avow-0.4.1-py3-none-any.whl from PyPI (sha256 c295ff2d4b3d1ee13866d8d5a696e5344a1581cd0750b6bdba5f482f6b0e1630), sign_payload over a frozen pydantic model {kind: str, score: float, tags: list[str]}, receipts dumped with model_dump_json, ledger written by avow.append and avow.current_head.",
+    "typescript: @edgeproc/avow@0.4.1 from npm (integrity sha512-HmoF165wNgrcMv5ZwAHXbzCrR8gFqATQONNMtUArNMFm1L46oTZJ0sWDOdVHWAg4PZwEAkRQo5PRVOPbyAjBIA==), signPayload(payload, seed_hex).",
+    "Receipts sealed by avow <= 0.4.x carry no 'schema' field. They must keep verifying.",
+    "typescript_outside_json_domain: sealed by @edgeproc/avow@0.4.1 over an integer above 2^53-1. 0.4.1 verified it in TypeScript; Python never could (RFC 8785 integer domain). It stays rejected: a JSON text whose number JavaScript rounds is not one payload in both languages."
+  ],
+  "seed_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+  "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+  "python_receipts": [
+    {
+      "payload": {
+        "kind": "score",
+        "score": 0.5,
+        "tags": [
+          "a",
+          "b"
+        ]
+      },
+      "payload_hash": "sha256:598557f8e6ca84cccb6dc64ce5755abdf91477003738aa80b144ba9a31647ac9",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "85dd359688d7242019d5060a64a0faf15245387f242b7a881b76de74e7f39519f71cb23087de8fa838c0f4f3fa6c58371fc59f19ea3528c87eb326720da95b08"
+    },
+    {
+      "payload": {
+        "kind": "effect",
+        "score": 0.1,
+        "tags": []
+      },
+      "payload_hash": "sha256:d88f14c90e0db095fba877f0e4c6d65771f885851d9c7dc49b4433b3d17163da",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "2ade7d58d0a33b8df4839f934ca70c27aa0c5c1af38c47d7f0123578bb995845e4acd6c430dcf8aeadb0d7b8eee0a345ec9bfdf32863cdfee96ec565b19ac70a"
+    },
+    {
+      "payload": {
+        "kind": "edge",
+        "score": 1e-07,
+        "tags": [
+          "x"
+        ]
+      },
+      "payload_hash": "sha256:4c97a67eafb6aa19a58e74907a23ecbfac0a5fe94146b87b0660011786746e82",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "7954b427ccf3841b89b6c26da2ad1281537a69d690d6457f85e747cf64ce99ea78b38ab5852ce39e5d3693ab65c251b3d73d978808b1e769a02db95667708c00"
+    }
+  ],
+  "typescript_receipts": [
+    {
+      "payload": {
+        "kind": "score",
+        "score": 0.5,
+        "tags": [
+          "a",
+          "b"
+        ]
+      },
+      "payload_hash": "sha256:598557f8e6ca84cccb6dc64ce5755abdf91477003738aa80b144ba9a31647ac9",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "85dd359688d7242019d5060a64a0faf15245387f242b7a881b76de74e7f39519f71cb23087de8fa838c0f4f3fa6c58371fc59f19ea3528c87eb326720da95b08"
+    },
+    {
+      "payload": {
+        "kind": "effect",
+        "score": 0.1,
+        "tags": []
+      },
+      "payload_hash": "sha256:d88f14c90e0db095fba877f0e4c6d65771f885851d9c7dc49b4433b3d17163da",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "2ade7d58d0a33b8df4839f934ca70c27aa0c5c1af38c47d7f0123578bb995845e4acd6c430dcf8aeadb0d7b8eee0a345ec9bfdf32863cdfee96ec565b19ac70a"
+    },
+    {
+      "payload": {
+        "kind": "edge",
+        "score": 1e-07,
+        "tags": [
+          "x"
+        ]
+      },
+      "payload_hash": "sha256:4c97a67eafb6aa19a58e74907a23ecbfac0a5fe94146b87b0660011786746e82",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "7954b427ccf3841b89b6c26da2ad1281537a69d690d6457f85e747cf64ce99ea78b38ab5852ce39e5d3693ab65c251b3d73d978808b1e769a02db95667708c00"
+    },
+    {
+      "payload": [
+        1,
+        "two",
+        null
+      ],
+      "payload_hash": "sha256:597be421a7a1692cdedfeae56567a7f6f64f20022eacae23a3918aeaa29e5904",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "a98ea316f73a6d970e72cb895b6282ce02519af337224e08bad15135aaec97c53b9d10f6b0d87361b6d110a9bf0d99d0032f014401c380086e7b186d315af703"
+    },
+    {
+      "payload": "sealed evidence",
+      "payload_hash": "sha256:d80f03f6f50391456c06a4fedde2ec6cd7c38d1aa9075977be269c2360ee30d4",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "78e76082c639bad02ca64387890c291cfc7eeb03c0b8bba139c308ee0c7dfc9fdfd97ba98eb77ccbb25f380020c20432363b6bfaa84f122dc2d873157e8a9400"
+    },
+    {
+      "payload": 42.5,
+      "payload_hash": "sha256:7b713affffacc53f6dbd3a5fd52117bc3eb5f3881789d2eb26b5f636daa066df",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "636ed8ed8cfee310570d527314b3e35a265092ccd54b408cc72623670890930f3cc59f222ed2d28292acb6a37e876a900aa07a0cc387e8cca93c4f4af6bbe60a"
+    },
+    {
+      "payload": true,
+      "payload_hash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "f71b0e0e8ab82891d7af39c2838a203000a1367b6e583a002a8c4069bc70ff4059bb7dd5332584f56e4b215acb5946fa3610113f1e1f09943d899ea97c30000a"
+    },
+    {
+      "payload": {
+        "nested": {
+          "z": 1,
+          "a": [
+            true,
+            false,
+            null
+          ]
+        },
+        "unicode": "caf\u00e9 \u2603"
+      },
+      "payload_hash": "sha256:a2b8258018549d9231cd224f4d65213432254302037554904843f308260d3b43",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "f201dc17c3dfb8b2eac3b18f26a952e914d2a72e5f1942b4bd54265b71527b9f9005dfcc23ff44c0c6021c941c48e369e7d640a1862ed5e431596757bf7dd000"
+    }
+  ],
+  "python_ledger": {
+    "lines": [
+      "{\"seq\":0,\"prev_hash\":\"sha256:0000000000000000000000000000000000000000000000000000000000000000\",\"receipt\":{\"payload\":{\"kind\":\"score\",\"score\":0.5,\"tags\":[\"a\",\"b\"]},\"payload_hash\":\"sha256:598557f8e6ca84cccb6dc64ce5755abdf91477003738aa80b144ba9a31647ac9\",\"public_key\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\",\"signature\":\"85dd359688d7242019d5060a64a0faf15245387f242b7a881b76de74e7f39519f71cb23087de8fa838c0f4f3fa6c58371fc59f19ea3528c87eb326720da95b08\"}}",
+      "{\"seq\":1,\"prev_hash\":\"sha256:6ec138e6c37992c81d871c207818a17c47cbc4489ed87458624d67c8fd4d104e\",\"receipt\":{\"payload\":{\"kind\":\"effect\",\"score\":0.1,\"tags\":[]},\"payload_hash\":\"sha256:d88f14c90e0db095fba877f0e4c6d65771f885851d9c7dc49b4433b3d17163da\",\"public_key\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\",\"signature\":\"2ade7d58d0a33b8df4839f934ca70c27aa0c5c1af38c47d7f0123578bb995845e4acd6c430dcf8aeadb0d7b8eee0a345ec9bfdf32863cdfee96ec565b19ac70a\"}}",
+      "{\"seq\":2,\"prev_hash\":\"sha256:10b9a34ba3013657017c927835286cfecb491f031de9e52d79bd2791830ab013\",\"receipt\":{\"payload\":{\"kind\":\"edge\",\"score\":1e-7,\"tags\":[\"x\"]},\"payload_hash\":\"sha256:4c97a67eafb6aa19a58e74907a23ecbfac0a5fe94146b87b0660011786746e82\",\"public_key\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\",\"signature\":\"7954b427ccf3841b89b6c26da2ad1281537a69d690d6457f85e747cf64ce99ea78b38ab5852ce39e5d3693ab65c251b3d73d978808b1e769a02db95667708c00\"}}"
+    ],
+    "head": {
+      "count": 3,
+      "head_hash": "sha256:8fa4ffaa9c925bb112def1f159b60783ccb3f44a1bcec15d48bbb3243da1fd79"
+    }
+  },
+  "typescript_outside_json_domain": [
+    {
+      "payload": {
+        "count": 1152921504606847000
+      },
+      "payload_hash": "sha256:50be167ce3576c530ef295d31833943ac6cf2e7f808927429201114f1534cf5c",
+      "public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+      "signature": "96bcb249ccd031238f71e89acc35d1c457f2d5ac14ce79857ef0dbb38f7ae9edf6dbf8c803e86cadceba131be3a428e57df947a41a0bf429c9294845fdba1404"
+    }
+  ]
+}

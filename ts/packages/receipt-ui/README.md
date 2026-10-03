@@ -29,11 +29,13 @@ and this package.
 
 | receipt-ui | `@gainratio/avow` peer | Receipt format |
 | --- | --- | --- |
-| 0.3.x | `^0.5.2` | `avow.receipt/v1` (carries a `schema` field) |
+| 0.3.x | `^0.5.2` | `avow.receipt/v1` (carries a `schema` field), and pre-schema receipts with avow `0.5.3`+ |
 | 0.1.x – 0.2.x | `^0.1.0` | pre-schema receipts (published from the old `hseshadr/assay` repo) |
 
-A receipt without the `avow.receipt/v1` schema renders as *Not verified* on
-0.3.x: avow 0.5 refuses it, and this package never overrides avow's verdict.
+This package shows avow's verdict and never overrides it. A receipt with no `schema`
+(sealed by avow `0.4.x` or older) renders *Verified* with avow `0.5.3` or newer, and
+*Not verified* with avow `0.5.0`–`0.5.2`, which wrongly refused it. A receipt with any
+other `schema` value renders *Not verified*.
 
 ## Use
 

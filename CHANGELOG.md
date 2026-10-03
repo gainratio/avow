@@ -4,6 +4,30 @@ All notable standalone Avow changes will be recorded here.
 
 ## [Unreleased]
 
+- **fix: receipts sealed by avow `0.4.x` and older verify again, in Python and
+  TypeScript.** `0.5.0` made the `schema` field required and refused every receipt
+  without it, so every receipt sealed before `0.5.0` (including receipts sealed through
+  `@edgeproc/privacy-core` `0.2.x`–`0.3.1`) and every `0.4.x` ledger stopped verifying.
+  A receipt with **no** `schema` key is now accepted as the legacy form and checked
+  under the same rules it was sealed under: the same payload hash and an Ed25519
+  signature over the same RFC 8785 bytes. New receipts still carry
+  `schema: "avow.receipt/v1"`. A `schema` that is present but is not exactly
+  `avow.receipt/v1` (including `null`, `""`, and unknown versions) is still refused with
+  `avow.receipt_schema_mismatch`. Python writes a legacy receipt back without a
+  `schema` key, so it round-trips unchanged.
+- **Why this is safe:** `schema` has never been covered by the signature. A v1 receipt
+  with the label removed is byte-for-byte the receipt `0.4.x` would have sealed for the
+  same payload and key, so removing it changes no payload, hash, signer, or signature
+  check. Tests pin this against receipts sealed by the released `avow==0.4.1` and
+  `@edgeproc/avow@0.4.1` (`testdata/vectors/legacy_receipts.json`).
+- **Still refused:** a legacy receipt whose payload is outside the closed JSON domain
+  (for example an integer above 2^53−1, which `@edgeproc/avow` `0.4.x` could seal in
+  TypeScript). JavaScript and Python read that JSON text as different numbers, so it is
+  not one payload in both languages. Python never accepted such receipts.
+- **Inverted tests (a stated contract is reversed):** the tests that asserted "a
+  receipt without `schema` is rejected" now assert it verifies. They were asserting
+  the defect.
+
 - Rewrite the README in plain English: what a receipt is, a CLI walkthrough with real
   output, honest limits, and install steps. Move the technical detail into the new
   `docs/ARCHITECTURE.md`, add `docs/GETTING_STARTED.md` for new developers, and update
@@ -37,6 +61,26 @@ All notable standalone Avow changes will be recorded here.
 ## [0.5.0]
 
 The first release built from this repository, and the first clean `avow` wheel.
+
+> **Correction (added in 0.5.3).** The line below saying "No receipt, ledger, or other
+> wire format changes" was wrong. `0.5.0` changed the receipt contract and the npm API:
+>
+> - **Receipts gained a required `schema: "avow.receipt/v1"` field.** Python
+>   (`SignedReceipt` parsing, `verify_signature`, `avow verify`) and TypeScript
+>   (`verifySignature`) refused any receipt without it, so every receipt and ledger
+>   sealed by `0.4.x` or older stopped verifying. Fixed in `0.5.3`.
+> - **`@edgeproc/avow` removed `ReplayMismatch`.** It was a deprecated alias of
+>   `PayloadHashMismatch` since `0.3.0`. Use `PayloadHashMismatch` (code
+>   `avow.payload_hash_mismatch`). Python still has `avow.errors.ReplayMismatch`.
+> - **`@edgeproc/avow` removed the metrics exports** (`binaryRates`, `confusionCounts`,
+>   `ratesFromCounts`, `DEFAULT_THRESHOLD`, `precisionAtK`, `recallAtK`, `f1AtK`, `mrr`,
+>   `binaryJudgments`, `AssayError`, `EmptyRelevantSet`, `InvalidRankingRequest`,
+>   `InvalidScoreRequest`, and their types). They are scoring, not signing, and now ship
+>   in the scoring package `@gainratio/assay`. Import them from there.
+> - **TypeScript payloads are checked against the closed JSON domain** when signing and
+>   verifying: integers beyond ±(2^53−1), lone surrogates, accessors, sparse arrays,
+>   cycles, and non-plain objects fail with `avow.canonicalization_failed`. Python
+>   already refused integers outside that range.
 
 - **Packaging:** the release verifier now refuses any wheel or sdist that installs a
   top-level name other than `avow`, and clean-installs the wheel beside

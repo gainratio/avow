@@ -28,6 +28,8 @@ await verifySignature(receipt, pinnedPublicKey);
 The example derives the public key before the receipt exists. In a real verifier,
 obtain `pinnedPublicKey` independently through a trusted configuration or distribution
 channel—never from `receipt.public_key`. Every emitted receipt has schema
+`avow.receipt/v1`. Receipts sealed by `@edgeproc/avow` `0.4.x` and older have no
+`schema` key and still verify; a `schema` that is present must be exactly
 `avow.receipt/v1`.
 
 Verification proves that the payload is unchanged and was signed by the caller-pinned
