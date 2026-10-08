@@ -25,7 +25,7 @@
   "author": "Harish Seshadri",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hseshadr/avow.git",
+    "url": "git+https://github.com/gainratio/avow.git",
     "directory": "ts"
   },
   "packageManager": "pnpm@11.5.0",

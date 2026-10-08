@@ -477,8 +477,19 @@ def test_should_anchor_the_npm_tarball_so_npm_reads_a_file_not_github_shorthand(
     assert published.group(1) == "./release/npm/*.tgz"
 
 
+def test_should_point_npm_provenance_at_the_gainratio_publishing_repository() -> None:
+    # Given npm provenance must name the repository whose workflow publishes the tarball
+    package = _mapping(json.loads(Path("ts/package.json").read_text(encoding="utf-8")))
+    # Then the @gainratio/avow manifest names gainratio/avow, the repository that publishes it
+    assert _mapping(package["repository"]) == {
+        "type": "git",
+        "url": "git+https://github.com/gainratio/avow.git",
+        "directory": "ts",
+    }
+
+
 def test_should_match_the_registered_pypi_trusted_publisher_exactly() -> None:
-    # Given PyPI trusts only hseshadr/avow, workflow publish.yml, with no environment
+    # Given PyPI trusts only gainratio/avow, workflow publish.yml, with no environment
     publish = _job(_workflow("publish.yml"), "publish-python")
     # Then the OIDC job runs from that file without naming a deployment environment
     assert (_WORKFLOW_DIR / "publish.yml").is_file()

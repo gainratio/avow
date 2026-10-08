@@ -33,7 +33,7 @@ Traps we hit on a real machine:
 ## 2. Clone, install, and run the tests
 
 ```bash
-git clone https://github.com/hseshadr/avow.git
+git clone https://github.com/gainratio/avow.git
 cd avow
 uv sync --frozen --all-groups
 uv run pytest -q

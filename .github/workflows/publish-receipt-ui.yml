@@ -7,8 +7,8 @@
 #     so `receipt-ui-v0.3.0` can never trigger an avow release, and this file's
 #     `receipt-ui-v*.*.*` can never match a `vX.Y.Z` tag. One tag, one rail.
 #   * npm trusted publishing is registered per package against the calling
-#     workflow filename: @gainratio/receipt-ui -> hseshadr/avow publish-receipt-ui.yml,
-#     disjoint from @gainratio/avow -> hseshadr/avow publish.yml.
+#     workflow filename: @gainratio/receipt-ui -> gainratio/avow publish-receipt-ui.yml,
+#     disjoint from @gainratio/avow -> gainratio/avow publish.yml.
 #
 # Release = bump ts/packages/receipt-ui/package.json + its CHANGELOG, merge to
 # main, then `git tag receipt-ui-vX.Y.Z && git push origin receipt-ui-vX.Y.Z`.
