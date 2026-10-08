@@ -350,6 +350,22 @@ def test_should_build_a_small_runtime_only_python_sdist(tmp_path: Path) -> None:
     assert ("src", "avow", "envelope.py") in paths
 
 
+@pytest.mark.parametrize("name", ["security-audit.yml", "publish.yml"])
+def test_should_install_checksum_pinned_gitleaks_without_the_org_licensed_action(
+    name: str,
+) -> None:
+    # Given gitleaks-action demands a paid license once the repo is organization-owned
+    workflow = _workflow(name)
+    commands = "\n".join(_commands(_mapping(job)) for job in _jobs(workflow).values())
+    # Then no job calls the action, and the CLI comes from a checksum-verified release asset
+    assert not any(use.startswith("gitleaks/gitleaks-action@") for use in _action_uses(workflow))
+    assert "gitleaks_8.30.1_linux_x64.tar.gz" in commands
+    assert (
+        "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
+        '  gitleaks_8.30.1_linux_x64.tar.gz" | sha256sum --check --strict'
+    ) in commands
+
+
 def test_should_scan_full_history_and_audit_locked_dependencies() -> None:
     # Given the scheduled security workflow
     workflow = _workflow("security-audit.yml")
