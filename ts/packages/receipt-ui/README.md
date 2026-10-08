@@ -88,7 +88,7 @@ panel's meta strings (`receipt` — the section aria-label — plus `algorithm`,
 
 ## Develop
 
-This package lives in the [`hseshadr/avow`](https://github.com/hseshadr/avow)
+This package lives in the [`gainratio/avow`](https://github.com/gainratio/avow)
 pnpm workspace at `ts/packages/receipt-ui` and tests against the avow source
 in `ts/`, not a published copy.
 

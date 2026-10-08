@@ -350,6 +350,22 @@ def test_should_build_a_small_runtime_only_python_sdist(tmp_path: Path) -> None:
     assert ("src", "avow", "envelope.py") in paths
 
 
+@pytest.mark.parametrize("name", ["security-audit.yml", "publish.yml"])
+def test_should_install_checksum_pinned_gitleaks_without_the_org_licensed_action(
+    name: str,
+) -> None:
+    # Given gitleaks-action demands a paid license once the repo is organization-owned
+    workflow = _workflow(name)
+    commands = "\n".join(_commands(_mapping(job)) for job in _jobs(workflow).values())
+    # Then no job calls the action, and the CLI comes from a checksum-verified release asset
+    assert not any(use.startswith("gitleaks/gitleaks-action@") for use in _action_uses(workflow))
+    assert "gitleaks_8.30.1_linux_x64.tar.gz" in commands
+    assert (
+        "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
+        '  gitleaks_8.30.1_linux_x64.tar.gz" | sha256sum --check --strict'
+    ) in commands
+
+
 def test_should_scan_full_history_and_audit_locked_dependencies() -> None:
     # Given the scheduled security workflow
     workflow = _workflow("security-audit.yml")
@@ -477,8 +493,19 @@ def test_should_anchor_the_npm_tarball_so_npm_reads_a_file_not_github_shorthand(
     assert published.group(1) == "./release/npm/*.tgz"
 
 
+def test_should_point_npm_provenance_at_the_gainratio_publishing_repository() -> None:
+    # Given npm provenance must name the repository whose workflow publishes the tarball
+    package = _mapping(json.loads(Path("ts/package.json").read_text(encoding="utf-8")))
+    # Then the @gainratio/avow manifest names gainratio/avow, the repository that publishes it
+    assert _mapping(package["repository"]) == {
+        "type": "git",
+        "url": "git+https://github.com/gainratio/avow.git",
+        "directory": "ts",
+    }
+
+
 def test_should_match_the_registered_pypi_trusted_publisher_exactly() -> None:
-    # Given PyPI trusts only hseshadr/avow, workflow publish.yml, with no environment
+    # Given PyPI trusts only gainratio/avow, workflow publish.yml, with no environment
     publish = _job(_workflow("publish.yml"), "publish-python")
     # Then the OIDC job runs from that file without naming a deployment environment
     assert (_WORKFLOW_DIR / "publish.yml").is_file()

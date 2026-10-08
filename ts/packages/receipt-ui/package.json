@@ -25,10 +25,10 @@
   "author": "Harish Seshadri",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hseshadr/avow.git",
+    "url": "git+https://github.com/gainratio/avow.git",
     "directory": "ts/packages/receipt-ui"
   },
-  "homepage": "https://github.com/hseshadr/avow/tree/main/ts/packages/receipt-ui#readme",
+  "homepage": "https://github.com/gainratio/avow/tree/main/ts/packages/receipt-ui#readme",
   "engines": {
     "node": ">=22.13"
   },

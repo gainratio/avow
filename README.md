@@ -4,8 +4,8 @@ Avow signs a JSON record into a receipt, a file anyone can check offline to conf
 
 **Try it: `pip install "avow[cli]>=0.5.1"`, then run the four commands under [Try it](#try-it).**
 
-[![CI](https://github.com/hseshadr/avow/actions/workflows/ci.yml/badge.svg)](https://github.com/hseshadr/avow/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/hseshadr/avow)](LICENSE)
+[![CI](https://github.com/gainratio/avow/actions/workflows/ci.yml/badge.svg)](https://github.com/gainratio/avow/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/gainratio/avow)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/avow)](https://pypi.org/project/avow/)
 
 Teams often have to show later what they decided: that a release was approved, that its
@@ -190,7 +190,7 @@ You need Python 3.12 or newer and [`uv`](https://docs.astral.sh/uv/); Node 22 an
 only for the TypeScript package.
 
 ```bash
-git clone https://github.com/hseshadr/avow.git && cd avow
+git clone https://github.com/gainratio/avow.git && cd avow
 uv sync --frozen --all-groups
 ```
 
@@ -226,7 +226,7 @@ local traps we hit, a map of the code, a first change, and how to open a pull re
 - [CHANGELOG](CHANGELOG.md): what changed in each release.
 - [SECURITY.md](SECURITY.md): how to report a vulnerability privately.
 - [PROVENANCE.md](PROVENANCE.md): where this repository's history came from.
-- Questions and bugs: [GitHub Issues](https://github.com/hseshadr/avow/issues).
+- Questions and bugs: [GitHub Issues](https://github.com/gainratio/avow/issues).
 
 ## License
 
