@@ -366,6 +366,46 @@ def test_should_install_checksum_pinned_gitleaks_without_the_org_licensed_action
     ) in commands
 
 
+def _gitleaks_config() -> dict[str, object]:
+    return _mapping(tomllib.loads(Path(".gitleaks.toml").read_text(encoding="utf-8")))
+
+
+def _gitleaks_rule(rule_id: str) -> dict[str, object]:
+    rules = _gitleaks_config()["rules"]
+    assert isinstance(rules, list)
+    return next(_mapping(rule) for rule in rules if _mapping(rule)["id"] == rule_id)
+
+
+def _gitleaks_invocations() -> tuple[str, ...]:
+    sources = [(_WORKFLOW_DIR / name).read_text(encoding="utf-8") for name in _WORKFLOW_NAMES]
+    sources.append(Path("pyproject.toml").read_text(encoding="utf-8"))
+    pattern = re.compile(r"gitleaks (?:git|dir)\b[^&\n\"]*")
+    return tuple(match.strip() for text in sources for match in pattern.findall(text))
+
+
+def test_should_extend_default_gitleaks_rules_with_stateless_github_app_tokens() -> None:
+    # Given GitHub App and Actions tokens now use the stateless ghs_<APPID>_<JWT> format
+    # (joined at runtime: `+` would be constant-folded into a token-shaped literal
+    # inside the cached .pyc, which the local `gitleaks dir .` scan then flags)
+    token = "_".join(["ghs", "1234567", "eyJhbGciOiJSUzI1NiJ9." + "a1B2-c3_D4." * 48])
+    rule = _gitleaks_rule("github-app-token-stateless")
+    # When the rule's pattern is applied to a leaked shell export
+    match = re.search(str(rule["regex"]), f"export GITHUB_TOKEN={token}")
+    # Then the default ruleset still loads and the extra rule catches the new format
+    assert _mapping(_gitleaks_config()["extend"])["useDefault"] is True
+    assert match is not None and match.group() == token
+    assert rule["keywords"] == ["ghs_"]
+
+
+def test_should_scan_the_repository_root_so_gitleaks_loads_the_repo_config() -> None:
+    # Given gitleaks auto-loads <source>/.gitleaks.toml
+    # When every gitleaks scan in the workflows and poe tasks is collected
+    invocations = _gitleaks_invocations()
+    # Then every scan targets the repository root
+    assert len(invocations) >= 4
+    assert all(command.endswith(" .") for command in invocations), invocations
+
+
 def test_should_scan_full_history_and_audit_locked_dependencies() -> None:
     # Given the scheduled security workflow
     workflow = _workflow("security-audit.yml")
