@@ -19,6 +19,7 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
+from test_cli import cli_extra
 
 _NEIGHBOUR = "assay-engine==0.5.0.dev3"
 
@@ -85,7 +86,7 @@ def test_should_keep_cli_dependencies_out_of_the_core_install(built: tuple[Path,
     # Then the core needs only the trust kernel, and typer arrives only with [cli]
     core = {re.split(r"[<>=!~;\[ ]", r)[0] for r in requires if "extra ==" not in r}
     assert core == {"pydantic", "pynacl", "rfc8785"}
-    assert "typer>=0.27.2; extra == 'cli'" in requires
+    assert {f"{item}; extra == 'cli'" for item in cli_extra()} <= set(requires)
 
 
 def test_should_count_top_level_modules_and_ignore_dist_info(tmp_path: Path) -> None:

@@ -3,12 +3,13 @@ from __future__ import annotations
 import fcntl
 import json
 import os
+import re
 import subprocess
 from importlib.metadata import version
 from pathlib import Path
 
 import pytest
-from test_cli import _build_and_install
+from test_cli import _build_and_install, cli_extra
 from typer.testing import CliRunner
 
 import avow.ledger as ledger_module
@@ -17,8 +18,14 @@ from avow.errors import LedgerHeadWriteFailed
 from avow.ledger import EMPTY_HEAD, save_head
 
 _SENTINEL = "harish.private@example.invalid"
-_TYPER_FLOOR = "typer==0.27.2"
 _RUNNER = CliRunner()
+
+
+def _typer_floor() -> str:
+    """Pin typer to the floor the ``[cli]`` extra declares, so a raised floor is followed."""
+    floors = [m[1] for item in cli_extra() if (m := re.fullmatch(r"typer>=([0-9.]+)", item))]
+    assert len(floors) == 1, f"[cli] must declare exactly one typer>= floor: {cli_extra()}"
+    return f"typer=={floors[0]}"
 
 
 @pytest.fixture(scope="module")
@@ -30,7 +37,7 @@ def installed_avow(tmp_path_factory: pytest.TempPathFactory) -> Path:
 @pytest.fixture(scope="module")
 def floor_avow(tmp_path_factory: pytest.TempPathFactory) -> Path:
     path = tmp_path_factory.mktemp("typer-floor-installed-avow")
-    return _build_and_install(path, _TYPER_FLOOR)
+    return _build_and_install(path, _typer_floor())
 
 
 @pytest.fixture(params=("installed_avow", "floor_avow"))

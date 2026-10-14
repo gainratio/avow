@@ -1,0 +1,58 @@
+# One grouped PR per ecosystem per month, minor and patch only.
+#
+# Why: every `uses:` here is SHA-pinned and both lockfiles are frozen, so nothing moves
+# unless a bot opens the PR. Monthly + grouped keeps that to at most three PRs a month.
+# Semver-major updates are ignored on purpose: majors are migrated by hand in their own PR.
+#
+# Python uses the `uv` ecosystem (not `pip`) so bumps relock uv.lock. npm points at /ts,
+# the pnpm workspace root that owns pnpm-lock.yaml for both ts/ and ts/packages/receipt-ui.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      # Majors are migrated by hand.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: npm
+    directory: /ts
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      npm:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      # Majors are migrated by hand.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      python:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      # Majors are migrated by hand.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

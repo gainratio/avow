@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import tomllib
 import zipfile
 from importlib.metadata import version
 from pathlib import Path
@@ -96,6 +97,14 @@ def _create_environment(path: Path) -> Path:
 
 def _install_wheel(python: Path, wheel: Path) -> None:
     _run_checked(["uv", "pip", "install", "--python", str(python), str(wheel)])
+
+
+def cli_extra() -> tuple[str, ...]:
+    """Return the ``[cli]`` extra exactly as pyproject.toml declares it (the source of truth)."""
+    pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+    extra = pyproject["project"]["optional-dependencies"]["cli"]
+    assert isinstance(extra, list) and all(isinstance(item, str) for item in extra)
+    return tuple(extra)
 
 
 def _build_and_install(tmp_path: Path, typer_requirement: str | None = None) -> Path:
