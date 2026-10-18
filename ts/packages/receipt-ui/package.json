@@ -6,7 +6,7 @@
     "access": "public"
   },
   "type": "module",
-  "description": "React components that render and verify an Avow SignedReceipt \u2014 a composable badge and panel with a fail-closed, three-state verdict (verified / tampered / untrusted signer).",
+  "description": "React components that render and verify an Avow SignedReceipt \u2014 a composable badge and panel with a fail-closed, four-state verdict (verifying / verified / tampered / untrusted signer).",
   "keywords": [
     "react",
     "react-components",
@@ -55,7 +55,7 @@
     "gate": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "peerDependencies": {
-    "@gainratio/avow": "^0.5.2",
+    "@gainratio/avow": "^0.5.3",
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {

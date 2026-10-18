@@ -44,7 +44,7 @@ and packages). The test run took about 2 minutes, because some tests build and i
 the real wheel and npm tarball. Success ends with a line like:
 
 ```text
-265 passed in 113.22s (0:01:53)
+332 passed in 113.22s (0:01:53)
 ```
 
 (The exact count grows as tests are added.) For the TypeScript package:
@@ -54,7 +54,7 @@ pnpm --dir ts install --frozen-lockfile --ignore-scripts
 pnpm --dir ts exec vitest run
 ```
 
-Success is `Tests  100 passed (100)`, in a few seconds.
+Success is `Tests  131 passed (131)`, in a few seconds.
 
 ### Run the demo
 
