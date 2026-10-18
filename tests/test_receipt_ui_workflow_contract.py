@@ -91,7 +91,7 @@ def test_should_declare_avow_0_5_as_peer_and_this_repository_as_source() -> None
     # Given the receipt-ui manifest that npm will serve
     package = _mapping(json.loads(_PACKAGE.read_text(encoding="utf-8")))
     # Then it targets avow 0.5 and points provenance at gainratio/avow
-    assert _mapping(package["peerDependencies"])["@gainratio/avow"] == "^0.5.2"
+    assert _mapping(package["peerDependencies"])["@gainratio/avow"] == "^0.5.3"
     assert _mapping(package["repository"]) == {
         "type": "git",
         "url": "git+https://github.com/gainratio/avow.git",

@@ -223,6 +223,8 @@ local traps we hit, a map of the code, a first change, and how to open a pull re
 - [Quickstart](QUICKSTART.md): every CLI command, the JSON values Avow accepts, and how
   to test the built wheel.
 - [TypeScript package](ts/README.md): using `@gainratio/avow`.
+- [React receipt components](ts/packages/receipt-ui/README.md): `<ReceiptBadge>` and
+  `<ReceiptPanel>` for `@gainratio/receipt-ui`.
 - [CHANGELOG](CHANGELOG.md): what changed in each release.
 - [SECURITY.md](SECURITY.md): how to report a vulnerability privately.
 - [PROVENANCE.md](PROVENANCE.md): where this repository's history came from.
