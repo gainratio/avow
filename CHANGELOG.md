@@ -4,6 +4,16 @@ All notable standalone Avow changes will be recorded here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`import avow` no longer fails on Windows.** `avow.ledger` imported `fcntl` at module
+  scope, so the whole package (including `sign_payload` and `verify_receipt`) raised
+  `ModuleNotFoundError` on a platform the docs already described as supported. The
+  exclusive file lock now uses `msvcrt.locking` on Windows and keeps `flock` on POSIX,
+  locking byte 0 of the ledger file on both paths so the protocol and error semantics are
+  unchanged. Windows still skips the POSIX `0600` key-file check, as documented in
+  `docs/OPERATIONS.md`.
+
 ## [0.5.3]
 
 - **fix: receipts sealed by avow `0.4.x` and older verify again, in Python and
