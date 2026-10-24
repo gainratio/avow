@@ -42,16 +42,21 @@ the head its operator pinned, which is the case the old zero-entry pass could no
 
 from __future__ import annotations
 
-import fcntl
 import math
 import os
 import stat
+import sys
 import tempfile
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import BinaryIO, TextIO
+
+if sys.platform == "win32":  # pragma: no cover - exercised on Windows
+    import msvcrt
+else:
+    import fcntl
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -199,14 +204,47 @@ def _current_locked_head(handle: TextIO) -> LedgerHead:
     return EMPTY_HEAD if line is None else _head_after(_parse_entry(line))
 
 
+def _try_lock(descriptor: int) -> None:
+    """Take the exclusive lock non-blocking, or raise OSError if it is held.
+
+    POSIX uses ``flock``. Windows has no ``fcntl``; ``msvcrt.locking`` locks a
+    byte range, so both paths lock byte 0 of the ledger file (a fixed byte, not
+    the append position) to keep the same mutual-exclusion contract.
+    """
+    if sys.platform == "win32":  # pragma: no cover - exercised on Windows
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        msvcrt.locking(descriptor, msvcrt.LK_NBLCK, 1)
+    else:
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+
+def _unlock(descriptor: int) -> None:
+    """Release the lock taken by :func:`_try_lock`."""
+    if sys.platform == "win32":  # pragma: no cover - exercised on Windows
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        msvcrt.locking(descriptor, msvcrt.LK_UNLCK, 1)
+    else:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+
+
+def _is_lock_conflict(exc: OSError) -> bool:
+    """Return whether ``exc`` means another process holds the lock."""
+    if isinstance(exc, BlockingIOError):
+        return True
+    # Windows reports a held byte-range lock as EACCES (13); EDEADLK is 36.
+    return sys.platform == "win32" and exc.errno in (13, 36)
+
+
 def _acquire_lock(descriptor: int, timeout_seconds: float) -> None:
     """Take the ledger lock or fail with a stable code at the bounded deadline."""
     deadline = time.monotonic() + timeout_seconds
     while True:
         try:
-            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            _try_lock(descriptor)
             return
-        except BlockingIOError as exc:
+        except OSError as exc:
+            if not _is_lock_conflict(exc):
+                raise
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 message = f"ledger lock not acquired within {timeout_seconds:.3f} seconds"
@@ -230,7 +268,7 @@ def _locked_ledger(path: Path, timeout_seconds: float) -> Iterator[TextIO]:
         try:
             yield handle
         finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            _unlock(handle.fileno())
 
 
 def _prepare_append[S: Subject](
