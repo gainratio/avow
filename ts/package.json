@@ -1,69 +1,70 @@
 {
-  "name": "@gainratio/avow",
-  "version": "0.5.3",
-  "publishConfig": {
-    "access": "public"
-  },
-  "type": "module",
-  "description": "Avow signs a JSON record into a receipt, a file anyone can check offline to confirm the record is unchanged and who signed it.",
-  "keywords": [
-    "ed25519",
-    "rfc8785",
-    "jcs",
-    "canonical-json",
-    "signed-receipt",
-    "digital-signature",
-    "tamper-evident",
-    "offline-verification",
-    "provenance",
-    "audit-log",
-    "cryptography",
-    "browser",
-    "typescript"
-  ],
-  "license": "MIT",
-  "author": "Harish Seshadri",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gainratio/avow.git",
-    "directory": "ts"
-  },
-  "packageManager": "pnpm@11.5.0",
-  "engines": {
-    "node": ">=22.13"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "sideEffects": false,
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --coverage",
-    "test:watch": "vitest",
-    "benchmark": "tsc -p tsconfig.build.json && node benchmarks/release.mjs",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "gate": "biome check . && tsc -p tsconfig.json --noEmit && vitest run --coverage && tsc -p tsconfig.build.json && node benchmarks/release.mjs"
-  },
-  "dependencies": {
-    "@noble/ed25519": "^3.1.0",
-    "canonicalize": "^3.0.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.3",
-    "@types/node": "^26.1.1",
-    "@vitest/coverage-v8": "^4.1.11",
-    "typescript": "^5.9.2",
-    "vitest": "^4.1.11"
-  }
+	"name": "@gainratio/avow",
+	"version": "0.5.3",
+	"publishConfig": {
+		"access": "public"
+	},
+	"type": "module",
+	"description": "Avow signs a JSON record into a receipt, a file anyone can check offline to confirm the record is unchanged and who signed it.",
+	"keywords": [
+		"ed25519",
+		"rfc8785",
+		"jcs",
+		"canonical-json",
+		"signed-receipt",
+		"digital-signature",
+		"tamper-evident",
+		"offline-verification",
+		"provenance",
+		"audit-log",
+		"cryptography",
+		"browser",
+		"typescript"
+	],
+	"license": "MIT",
+	"author": "Harish Seshadri",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/gainratio/avow.git",
+		"directory": "ts"
+	},
+	"packageManager": "pnpm@11.5.0",
+	"engines": {
+		"node": ">=22.13"
+	},
+	"files": [
+		"dist"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"sideEffects": false,
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run --coverage",
+		"test:watch": "vitest",
+		"benchmark": "tsc -p tsconfig.build.json && node benchmarks/release.mjs",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"gate": "biome check . && tsc -p tsconfig.json --noEmit && vitest run --coverage && tsc -p tsconfig.build.json && node benchmarks/release.mjs"
+	},
+	"dependencies": {
+		"@noble/ed25519": "^3.1.0",
+		"canonicalize": "^3.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.3",
+		"@types/node": "^26.1.1",
+		"@vitest/coverage-v8": "^4.1.11",
+		"typescript": "^5.9.2",
+		"vite": "^8.3.5",
+		"vitest": "^4.1.11"
+	}
 }
