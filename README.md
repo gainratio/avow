@@ -2,7 +2,9 @@
 
 Avow signs a JSON record into a receipt, a file anyone can check offline to confirm the record is unchanged and who signed it.
 
-**Try it: `pip install "avow[cli]>=0.5.1"`, then run the four commands under [Try it](#try-it).**
+**Try it: `pip install "avow[cli]>=0.5.3"`, then run the four commands under [Try it](#try-it).**
+
+**Docs:** [avow.gainratio.com](https://avow.gainratio.com/) · [Getting started](https://avow.gainratio.com/docs/) · [Examples](https://avow.gainratio.com/examples/)
 
 [![CI](https://github.com/gainratio/avow/actions/workflows/ci.yml/badge.svg)](https://github.com/gainratio/avow/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/gainratio/avow)](LICENSE)
