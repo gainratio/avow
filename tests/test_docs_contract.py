@@ -90,11 +90,16 @@ def _run_npm(arguments: list[str], environment: dict[str, str]) -> None:
     subprocess.run(arguments, cwd="ts", check=True, capture_output=True, text=True, env=environment)
 
 
+def _node_version(path: Path) -> tuple[int, ...]:
+    return tuple(map(int, path.parent.name[1:].split(".")))
+
+
 def _node_environment() -> dict[str, str]:
-    environments = tuple((Path.home() / ".nvm/versions/node").glob("v22.*/bin"))
+    candidates = (Path.home() / ".nvm/versions/node").glob("v22.*/bin")
+    environments = tuple(path for path in candidates if _node_version(path) >= (22, 13, 0))
     if not environments:
         return dict(os.environ)
-    selected = max(environments, key=lambda path: tuple(map(int, path.parent.name[1:].split("."))))
+    selected = max(environments, key=_node_version)
     return dict(os.environ) | {"PATH": f"{selected}:{os.environ['PATH']}"}
 
 
@@ -145,7 +150,7 @@ def test_should_put_one_line_install_before_internals_and_keep_the_evidence_loop
     commands = _first_runnable_block(markdown)
     loop = re.findall(r"```bash\n(bash examples/run_evidence_loop\.sh)\n```", markdown)
     # Then a cold reader starts from one install line and the evidence loop stays one line
-    assert commands == ('pip install "avow[cli]>=0.5.1"',)
+    assert commands == ('pip install "avow[cli]>=0.5.3"',)
     assert loop == ["bash examples/run_evidence_loop.sh"]
 
 
@@ -244,7 +249,7 @@ def test_should_keep_release_tooling_out_of_end_user_first_run() -> None:
     first_run = "\n".join(_first_runnable_block(markdown))
     release = _getting_started().partition("## Maintainer release check")[2]
     # Then users still get one simple start while maintainers get exact tool prerequisites
-    assert first_run == 'pip install "avow[cli]>=0.5.1"'
+    assert first_run == 'pip install "avow[cli]>=0.5.3"'
     assert "release-candidate" not in markdown.partition("## How it works")[0]
     assert all(item in release for item in ("Node 22", "Corepack", "pnpm 11.5.0"))
     assert "uv run poe release-candidate" in release
