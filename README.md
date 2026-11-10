@@ -32,7 +32,7 @@ You need Python 3.12 or newer.
 1. Install Avow with its command (the `cli` extra):
 
 ```bash
-pip install "avow[cli]>=0.5.1"
+pip install "avow[cli]>=0.5.3"
 ```
 
 2. Make a key pair, write a record, sign it, and check it. Run these in an empty folder:
@@ -130,6 +130,13 @@ connection. If you need a history, the ledger (`avow ledger append` and
 `avow ledger verify`) chains receipts so a deleted, inserted, or reordered entry is
 caught. The details are in [Architecture](docs/ARCHITECTURE.md).
 
+## Under the hood (for developers)
+
+- **Canonical serialization (`RFC 8785` JCS):** [`src/avow/canonical.py`](src/avow/canonical.py) and [`ts/src/canonical.ts`](ts/src/canonical.ts) reject `NaN`, `Infinity`, and non-JSON values, then emit byte-identical UTF-8 across Python and TypeScript.
+- **Ed25519 signing & offline verification:** [`src/avow/envelope.py`](src/avow/envelope.py), [`src/avow/verify.py`](src/avow/verify.py), and [`ts/src/receipt.ts`](ts/src/receipt.ts) bind `sha256:<hex>` over canonical payload bytes and verify against a caller-pinned public key (`expected_public_key` / `pinnedPublicKey`), never the self-declared `receipt.public_key`.
+- **Hash-chained JSONL ledger & UI:** [`src/avow/ledger.py`](src/avow/ledger.py) appends atomic, hash-linked entries that detect deletion, insertion, or reordering; [`ts/packages/receipt-ui`](ts/packages/receipt-ui) provides `<ReceiptBadge>` and `<ReceiptPanel>` React components.
+- **Cross-language test vectors:** [`testdata`](testdata) pins shared canonicalization, signature, tamper, and legacy `0.4.x` schema-less receipt vectors verified by both test suites. See [Architecture](docs/ARCHITECTURE.md) and [Contributing](CONTRIBUTING.md).
+
 ## What it does not do
 
 - **It does not prove the record is true.** A receipt proves the record is unchanged and
@@ -162,7 +169,7 @@ A longer comparison is in [Architecture](docs/ARCHITECTURE.md#compared-with-othe
 Python 3.12 or newer. This gives you the library and the `avow` command:
 
 ```bash
-pip install "avow[cli]>=0.5.1"
+pip install "avow[cli]>=0.5.3"
 ```
 
 If you only want the Python library and not the command, `pip install avow` is enough.

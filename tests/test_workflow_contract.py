@@ -86,11 +86,16 @@ def _run_identity(script: Path, tag: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+def _node_version(path: Path) -> tuple[int, ...]:
+    return tuple(map(int, path.parent.name[1:].split(".")))
+
+
 def _node_environment() -> dict[str, str]:
-    environments = tuple((Path.home() / ".nvm/versions/node").glob("v22.*/bin"))
+    candidates = (Path.home() / ".nvm/versions/node").glob("v22.*/bin")
+    environments = tuple(path for path in candidates if _node_version(path) >= (22, 13, 0))
     if not environments:
         return dict(os.environ)
-    selected = max(environments, key=lambda path: tuple(map(int, path.parent.name[1:].split("."))))
+    selected = max(environments, key=_node_version)
     return dict(os.environ) | {"PATH": f"{selected}:{os.environ['PATH']}"}
 
 
